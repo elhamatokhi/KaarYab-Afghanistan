@@ -1,8 +1,13 @@
-import type { Opportunity as PrismaOpportunity } from "@/generated/prisma/client";
+import { randomUUID } from "node:crypto";
+import type {
+  Opportunity as PrismaOpportunity,
+  Prisma,
+} from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   EMPLOYMENT_TYPES,
   OPPORTUNITY_CATEGORIES,
+  WORK_MODE_TO_PRISMA,
 } from "@/features/opportunities/constants";
 import type {
   EmploymentType,
@@ -11,6 +16,10 @@ import type {
   OpportunityCategory,
   WorkMode,
 } from "@/features/opportunities/types";
+import type {
+  OpportunityCreateInput,
+  OpportunityUpdateInput,
+} from "@/features/opportunities/validation";
 
 const WORK_MODE_FROM_PRISMA = {
   REMOTE: "remote",
@@ -57,6 +66,52 @@ export async function getFeaturedOpportunities(limit?: number) {
   });
 }
 
+export async function createOpportunity(input: OpportunityCreateInput) {
+  return runOpportunityQuery(async () => {
+    const opportunity = await prisma.opportunity.create({
+      data: {
+        ...mapCreateInputToPrismaInput(input),
+        id: createOpportunityId(),
+      },
+    });
+
+    return mapPrismaOpportunityToOpportunity(opportunity);
+  });
+}
+
+export async function updateOpportunity(
+  id: string,
+  input: OpportunityUpdateInput,
+) {
+  return runOpportunityQuery(async () => {
+    const existingOpportunity = await prisma.opportunity.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!existingOpportunity) {
+      return null;
+    }
+
+    const opportunity = await prisma.opportunity.update({
+      where: { id },
+      data: mapUpdateInputToPrismaInput(input),
+    });
+
+    return mapPrismaOpportunityToOpportunity(opportunity);
+  });
+}
+
+export async function deleteOpportunity(id: string) {
+  return runOpportunityQuery(async () => {
+    const result = await prisma.opportunity.deleteMany({
+      where: { id },
+    });
+
+    return result.count > 0;
+  });
+}
+
 export function isOpportunityDataAccessError(error: unknown) {
   return error instanceof OpportunityDataAccessError;
 }
@@ -93,6 +148,28 @@ async function runOpportunityQuery<TResult>(
     console.error("Opportunity database query failed.");
     throw new OpportunityDataAccessError();
   }
+}
+
+function mapCreateInputToPrismaInput(
+  input: OpportunityCreateInput,
+): Prisma.OpportunityUncheckedCreateInput {
+  return {
+    ...input,
+    workMode: WORK_MODE_TO_PRISMA[input.workMode],
+  };
+}
+
+function mapUpdateInputToPrismaInput(
+  input: OpportunityUpdateInput,
+): Prisma.OpportunityUncheckedUpdateInput {
+  return {
+    ...input,
+    workMode: input.workMode ? WORK_MODE_TO_PRISMA[input.workMode] : undefined,
+  };
+}
+
+function createOpportunityId() {
+  return `opp-${randomUUID()}`;
 }
 
 function parseCategory(value: string): OpportunityCategory {

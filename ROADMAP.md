@@ -14,16 +14,16 @@
 - URL-based opportunity search, filtering, sorting, result counts, and no-results states.
 - Redux Toolkit saved-opportunities state with localStorage persistence, save buttons, and a complete Saved page.
 - Neon PostgreSQL migration and seed with Prisma-backed reads for Home, Opportunities, and Opportunity Details.
+- Prisma-backed CRUD Route Handlers for opportunities with shared Zod validation. Mutation endpoints are unprotected until authentication is added in a later phase.
 
 ## Remaining Implementation Order
 
 1. Add React Hook Form and Zod schemas for create and edit forms.
 2. Build the dashboard statistics view.
 3. Add route loading, empty, error, and not-found states where still missing.
-4. Add Next.js Route Handlers for opportunity CRUD.
-5. Connect create, edit, and delete flows to PostgreSQL.
-6. Add focused tests for forms, dashboard calculations, and CRUD boundaries.
-7. Complete README deployment notes and deploy to Vercel with production environment variables.
+4. Connect create, edit, and delete form flows to the existing CRUD Route Handlers.
+5. Add focused tests for forms, dashboard calculations, and CRUD boundaries.
+6. Complete README deployment notes and deploy to Vercel with production environment variables.
 
 ## Continuous Requirements
 
