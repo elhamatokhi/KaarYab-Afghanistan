@@ -16,14 +16,13 @@
 - Neon PostgreSQL migration and seed with Prisma-backed reads for Home, Opportunities, and Opportunity Details.
 - Prisma-backed CRUD Route Handlers for opportunities with shared Zod validation. Mutation endpoints are unprotected until authentication is added in a later phase.
 - Shared React Hook Form opportunity form connected to Add and Edit pages through the existing CRUD API.
+- Prisma-backed dashboard with opportunity statistics, category distribution, upcoming deadlines, and delete management.
 
 ## Remaining Implementation Order
 
-1. Build the dashboard statistics view.
-2. Add route loading, empty, error, and not-found states where still missing.
-3. Add delete opportunity UI after confirmation patterns are defined.
-4. Add focused tests for dashboard calculations, form flows, and CRUD boundaries.
-5. Complete README deployment notes and deploy to Vercel with production environment variables.
+1. Add route loading, empty, error, and not-found states where still missing.
+2. Add focused tests for dashboard interactions, form flows, and CRUD boundaries.
+3. Complete README deployment notes and deploy to Vercel with production environment variables.
 
 ## Continuous Requirements
 

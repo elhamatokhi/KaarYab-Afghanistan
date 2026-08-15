@@ -31,7 +31,6 @@ import {
   formatOpportunityDate,
   getOpportunityDeadlineStatus,
   getRelatedOpportunities,
-  isDemoApplyLink,
 } from "@/features/opportunities/utils";
 
 type OpportunityDetailPageProps = {
@@ -79,7 +78,6 @@ export default async function OpportunityDetailPage({
     opportunity,
   );
   const isExpired = getOpportunityDeadlineStatus(opportunity) === "expired";
-  const isDemoApplication = isDemoApplyLink(opportunity.applyLink);
 
   return (
     <PageContainer>
@@ -250,7 +248,7 @@ export default async function OpportunityDetailPage({
                   This opportunity is expired, so KaarYab does not provide an
                   apply action for it.
                 </p>
-              ) : isDemoApplication ? (
+              ) : (
                 <>
                   <button
                     type="button"
@@ -265,22 +263,7 @@ export default async function OpportunityDetailPage({
                     Demo listing — the application link is disabled.
                   </p>
                 </>
-              ) : (
-                <a
-                  href={opportunity.applyLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-md bg-action px-4 py-2.5 text-sm font-semibold text-action-foreground transition hover:bg-action-hover"
-                >
-                  Apply on external website
-                  <ExternalLink aria-hidden="true" className="size-4" />
-                </a>
               )}
-              {!isDemoApplication ? (
-                <p className="mt-3 text-xs leading-5 text-muted">
-                  Applications are handled outside KaarYab Afghanistan.
-                </p>
-              ) : null}
             </section>
           </aside>
         </div>
