@@ -3,8 +3,13 @@ import { notFound } from "next/navigation";
 import { PageContainer, PageHeader } from "@/components/ui";
 import { requireAdminPage } from "@/features/auth/authorization";
 import { OpportunityForm } from "@/features/opportunities/components/opportunity-form";
-import { getOpportunityById } from "@/features/opportunities/data";
+import {
+  getOpportunityById,
+  getOpportunityTranslation,
+} from "@/features/opportunities/data";
+import { localizeOpportunityForEdit } from "@/features/opportunities/demo-localization";
 import { opportunityToFormValues } from "@/features/opportunities/form-utils";
+import { getI18n } from "@/i18n/server";
 
 type EditOpportunityPageProps = {
   params: Promise<{ id: string }>;
@@ -34,25 +39,34 @@ export default async function EditOpportunityPage({
 }: EditOpportunityPageProps) {
   const { id } = await params;
   await requireAdminPage(`/opportunities/${id}/edit`);
+  const { locale, t } = await getI18n();
   const opportunity = await getOpportunityById(id);
 
   if (!opportunity) {
     notFound();
   }
 
+  const translation =
+    locale === "en" ? null : await getOpportunityTranslation(opportunity.id, locale);
+  const localizedOpportunity =
+    locale === "en" ? opportunity : localizeOpportunityForEdit(opportunity, locale);
+  const formOpportunity = translation
+    ? { ...opportunity, ...translation }
+    : localizedOpportunity;
+
   return (
     <PageContainer>
       <div className="space-y-8">
         <PageHeader
-          eyebrow="Opportunity management"
-          title="Edit opportunity"
-          description="Update the listing details, requirements, deadline, and application path."
+          title={t("opportunityForm.editTitle")}
+          description={t("opportunityForm.editDescription")}
         />
         <OpportunityForm
           mode="edit"
+          locale={locale}
           opportunityId={opportunity.id}
           cancelHref={`/opportunities/${opportunity.id}`}
-          defaultValues={opportunityToFormValues(opportunity)}
+          defaultValues={opportunityToFormValues(formOpportunity)}
         />
       </div>
     </PageContainer>

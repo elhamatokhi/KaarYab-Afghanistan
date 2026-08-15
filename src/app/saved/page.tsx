@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { Badge, PageContainer, PageHeader } from "@/components/ui";
+import { PageContainer, PageHeader } from "@/components/ui";
 import { getCurrentSession } from "@/features/auth/authorization";
+import { getOpportunityTranslations } from "@/features/opportunities/data";
+import { localizeDemoOpportunities } from "@/features/opportunities/demo-localization";
 import { getSavedOpportunitiesForUser } from "@/features/saved/data";
 import { SavedOpportunitiesPage } from "@/features/saved/saved-opportunities-page";
+import { getI18n } from "@/i18n/server";
 
 export const metadata: Metadata = {
   title: "Saved opportunities | KaarYab Afghanistan",
@@ -13,6 +16,7 @@ export const metadata: Metadata = {
 
 export default async function SavedPage() {
   const session = await getCurrentSession();
+  const { locale, t } = await getI18n();
 
   if (!session?.user) {
     redirect(`/login?callbackUrl=${encodeURIComponent("/saved")}`);
@@ -23,22 +27,27 @@ export default async function SavedPage() {
   }
 
   const opportunities = await getSavedOpportunitiesForUser(session.user.id);
+  const storedTranslations =
+    locale === "en" ? {} : await getOpportunityTranslations(locale);
+  const localizedOpportunities = localizeDemoOpportunities(
+    opportunities,
+    locale,
+    storedTranslations,
+  );
 
   return (
     <PageContainer>
       <div className="space-y-8">
         <div className="space-y-4">
-          <Badge tone="accent">Saved list</Badge>
           <PageHeader
-            eyebrow="Saved opportunities"
-            title="Review opportunities you saved."
-            description="Keep track of opportunities you want to revisit while browsing KaarYab."
+            title={t("saved.title")}
+            description={t("saved.description")}
           />
         </div>
 
         <SavedOpportunitiesPage
           accountKey={session.user.id}
-          opportunities={opportunities}
+          opportunities={localizedOpportunities}
         />
       </div>
     </PageContainer>

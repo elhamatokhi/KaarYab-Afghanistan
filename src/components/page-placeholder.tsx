@@ -9,7 +9,6 @@ export function PagePlaceholder({ title, description }: PagePlaceholderProps) {
   return (
     <PageContainer>
       <PageHeader
-        eyebrow="Phase 1 placeholder"
         title={title}
         description={description}
       />

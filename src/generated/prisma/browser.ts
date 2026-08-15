@@ -23,6 +23,11 @@ export * from './enums';
  */
 export type Opportunity = Prisma.OpportunityModel
 /**
+ * Model OpportunityTranslation
+ * 
+ */
+export type OpportunityTranslation = Prisma.OpportunityTranslationModel
+/**
  * Model User
  * 
  */

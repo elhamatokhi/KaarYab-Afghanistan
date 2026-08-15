@@ -15,24 +15,31 @@ import {
 } from "lucide-react";
 import { Badge, PageContainer } from "@/components/ui";
 import { getCurrentUserRole, isAdminRole } from "@/features/auth/authorization";
-import {
-  CATEGORY_LABELS,
-  EMPLOYMENT_TYPE_LABELS,
-  WORK_MODE_LABELS,
-} from "@/features/opportunities/constants";
 import { DeadlineStatusBadge } from "@/features/opportunities/components/deadline-status-badge";
 import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
 import {
   getAllOpportunities,
   getOpportunityById,
+  getOpportunityTranslation,
+  getOpportunityTranslations,
   isOpportunityDataAccessError,
 } from "@/features/opportunities/data";
+import {
+  localizeDemoOpportunities,
+  localizeDemoOpportunity,
+} from "@/features/opportunities/demo-localization";
 import { SaveOpportunityButton } from "@/features/saved/save-opportunity-button";
 import {
-  formatOpportunityDate,
   getOpportunityDeadlineStatus,
   getRelatedOpportunities,
 } from "@/features/opportunities/utils";
+import { formatLocalizedDate } from "@/i18n/format";
+import {
+  CATEGORY_MESSAGE_KEYS,
+  EMPLOYMENT_TYPE_MESSAGE_KEYS,
+  WORK_MODE_MESSAGE_KEYS,
+} from "@/i18n/options";
+import { getI18n } from "@/i18n/server";
 
 type OpportunityDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -42,19 +49,27 @@ export async function generateMetadata({
   params,
 }: OpportunityDetailPageProps): Promise<Metadata> {
   const { id } = await params;
+  const { locale } = await getI18n();
   const opportunity = await getOpportunityMetadataById(id);
 
   if (!opportunity) {
     return {
-      title: "Opportunity unavailable | KaarYab Afghanistan",
-      description:
-        "KaarYab Afghanistan could not load the requested opportunity.",
+      title: "KaarYab Afghanistan",
+      description: "KaarYab Afghanistan",
     };
   }
 
+  const storedTranslation =
+    locale === "en" ? null : await getOpportunityTranslation(opportunity.id, locale);
+  const localizedOpportunity = localizeDemoOpportunity(
+    opportunity,
+    locale,
+    storedTranslation,
+  );
+
   return {
-    title: `${opportunity.title} at ${opportunity.organization} | KaarYab Afghanistan`,
-    description: opportunity.description,
+    title: `${localizedOpportunity.title} | KaarYab Afghanistan`,
+    description: localizedOpportunity.description,
   };
 }
 
@@ -63,16 +78,33 @@ export default async function OpportunityDetailPage({
 }: OpportunityDetailPageProps) {
   const { id } = await params;
   const data = await getOpportunityDetailData(id);
+  const { locale, t } = await getI18n();
 
   if (data.status === "error") {
-    return <OpportunityDataErrorPage />;
+    return (
+      <OpportunityDataErrorPage
+        title={t("details.unavailableTitle")}
+        description={t("details.unavailableDescription")}
+      />
+    );
   }
 
   if (!data.opportunity) {
     notFound();
   }
 
-  const { opportunity, opportunities } = data;
+  const storedTranslations =
+    locale === "en" ? {} : await getOpportunityTranslations(locale);
+  const opportunity = localizeDemoOpportunity(
+    data.opportunity,
+    locale,
+    storedTranslations[data.opportunity.id],
+  );
+  const opportunities = localizeDemoOpportunities(
+    data.opportunities,
+    locale,
+    storedTranslations,
+  );
 
   const relatedOpportunities = getRelatedOpportunities(
     opportunities,
@@ -90,19 +122,21 @@ export default async function OpportunityDetailPage({
           className="inline-flex items-center gap-2 rounded-md text-sm font-semibold text-action hover:text-action-hover"
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
-          Back to opportunities
+          {t("details.back")}
         </Link>
 
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
           <article className="min-w-0 space-y-8">
             <header className="rounded-lg border border-border bg-card p-5 sm:p-6">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge tone="accent">{CATEGORY_LABELS[opportunity.category]}</Badge>
+                <Badge tone="accent">
+                  {t(CATEGORY_MESSAGE_KEYS[opportunity.category])}
+                </Badge>
                 {opportunity.featured ? (
                   <Badge tone="warning">
                     <span className="inline-flex items-center gap-1.5">
                       <Star aria-hidden="true" className="size-3.5" />
-                      Featured
+                      {t("common.featured")}
                     </span>
                   </Badge>
                 ) : null}
@@ -124,44 +158,43 @@ export default async function OpportunityDetailPage({
               <dl className="mt-6 grid gap-4 border-t border-border pt-6 text-sm text-muted sm:grid-cols-2">
                 <SummaryItem
                   icon={<MapPin aria-hidden="true" className="size-4" />}
-                  label="Location"
+                  label={t("details.summary.location")}
                   value={`${opportunity.location}, ${opportunity.country}`}
                 />
                 <SummaryItem
                   icon={<Globe2 aria-hidden="true" className="size-4" />}
-                  label="Work mode"
-                  value={WORK_MODE_LABELS[opportunity.workMode]}
+                  label={t("details.summary.workMode")}
+                  value={t(WORK_MODE_MESSAGE_KEYS[opportunity.workMode])}
                 />
                 <SummaryItem
                   icon={
                     <BriefcaseBusiness aria-hidden="true" className="size-4" />
                   }
-                  label="Type"
-                  value={EMPLOYMENT_TYPE_LABELS[opportunity.employmentType]}
+                  label={t("details.summary.type")}
+                  value={t(EMPLOYMENT_TYPE_MESSAGE_KEYS[opportunity.employmentType])}
                 />
                 <SummaryItem
                   icon={<CalendarDays aria-hidden="true" className="size-4" />}
-                  label="Published"
-                  value={formatOpportunityDate(opportunity.createdAt)}
+                  label={t("details.summary.published")}
+                  value={formatLocalizedDate(opportunity.createdAt, locale)}
                 />
               </dl>
             </header>
 
             <section className="rounded-lg border border-border bg-card p-5 sm:p-6">
               <h2 className="text-2xl font-semibold text-primary">
-                Opportunity overview
+                {t("details.overview")}
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
-                Review the listing details before using the external
-                application option.
+                {t("details.overviewHelp")}
               </p>
               <p className="mt-5 text-base leading-8 text-primary">
                 {opportunity.description}
               </p>
               <h3 className="mt-6 text-sm font-semibold uppercase tracking-wide text-muted">
-                Tags
+                {t("common.tags")}
               </h3>
-              <ul className="mt-3 flex flex-wrap gap-2" aria-label="All tags">
+              <ul className="mt-3 flex flex-wrap gap-2" aria-label={t("card.tags")}>
                 {opportunity.tags.map((tag) => (
                   <li
                     key={tag}
@@ -181,7 +214,7 @@ export default async function OpportunityDetailPage({
                 id="requirements-heading"
                 className="text-2xl font-semibold text-primary"
               >
-                Requirements
+                {t("details.requirements")}
               </h2>
               <ul className="mt-5 space-y-3 text-sm leading-6 text-muted">
                 {opportunity.requirements.map((requirement) => (
@@ -207,7 +240,7 @@ export default async function OpportunityDetailPage({
                   id="save-opportunity-heading"
                   className="text-xl font-semibold text-primary"
                 >
-                  Bookmark
+                  {t("details.bookmark")}
                 </h2>
                 <div className="mt-4">
                   <SaveOpportunityButton
@@ -228,14 +261,14 @@ export default async function OpportunityDetailPage({
                   id="manage-opportunity-heading"
                   className="text-xl font-semibold text-primary"
                 >
-                  Manage
+                  {t("details.manage")}
                 </h2>
                 <Link
                   href={`/opportunities/${opportunity.id}/edit`}
                   className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
                 >
                   <Pencil aria-hidden="true" className="size-4" />
-                  Edit opportunity
+                  {t("details.edit")}
                 </Link>
               </section>
             ) : null}
@@ -245,15 +278,14 @@ export default async function OpportunityDetailPage({
               className="rounded-lg border border-border bg-card p-5"
             >
               <h2 id="application-heading" className="text-xl font-semibold text-primary">
-                Apply externally
+                {t("details.applyHeading")}
               </h2>
               <div className="mt-4">
                 <DeadlineStatusBadge opportunity={opportunity} />
               </div>
               {isExpired ? (
                 <p className="mt-4 rounded-md border border-danger/30 bg-danger-soft px-3 py-2 text-sm font-medium text-danger">
-                  This opportunity is expired, so KaarYab does not provide an
-                  apply action for it.
+                  {t("details.expiredApply")}
                 </p>
               ) : (
                 <>
@@ -263,11 +295,11 @@ export default async function OpportunityDetailPage({
                     aria-disabled="true"
                     className="mt-5 inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-md bg-action px-4 py-2.5 text-sm font-semibold text-action-foreground opacity-60"
                   >
-                    Apply on external website
+                    {t("details.applyButton")}
                     <ExternalLink aria-hidden="true" className="size-4" />
                   </button>
                   <p className="mt-3 text-xs leading-5 text-muted">
-                    Demo listing — the application link is disabled.
+                    {t("details.demoDisabled")}
                   </p>
                 </>
               )}
@@ -282,17 +314,18 @@ export default async function OpportunityDetailPage({
                 id="related-opportunities-heading"
                 className="text-2xl font-semibold text-primary"
               >
-                Related opportunities
+                {t("details.related")}
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted">
-                Similar listings selected by category, work mode, and shared
-                tags.
+                {t("details.relatedDescription")}
               </p>
             </div>
             <OpportunityList
               opportunities={relatedOpportunities}
-              heading="Similar listings"
-              countLabel={`Showing ${relatedOpportunities.length} related listings`}
+              heading={t("details.relatedHeading")}
+              countLabel={t("details.relatedCount", {
+                count: relatedOpportunities.length,
+              })}
             />
           </section>
         ) : null}
@@ -326,16 +359,19 @@ async function getOpportunityDetailData(id: string) {
   }
 }
 
-function OpportunityDataErrorPage() {
+function OpportunityDataErrorPage({
+  description,
+  title,
+}: {
+  description: string;
+  title: string;
+}) {
   return (
     <PageContainer>
       <section className="rounded-lg border border-border bg-card px-5 py-10 text-center">
-        <h1 className="text-2xl font-semibold text-primary">
-          Opportunity is temporarily unavailable
-        </h1>
+        <h1 className="text-2xl font-semibold text-primary">{title}</h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
-          KaarYab could not load this opportunity right now. Please try again
-          later.
+          {description}
         </p>
       </section>
     </PageContainer>

@@ -36,11 +36,32 @@ model Opportunity {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   savedBy        SavedOpportunity[]
+  translations   OpportunityTranslation[]
 
   @@index([category])
   @@index([country])
   @@index([workMode])
   @@index([deadline])
+}
+
+model OpportunityTranslation {
+  id            String   @id @default(cuid())
+  opportunityId String
+  locale        String
+  title         String
+  organization  String
+  location      String
+  country       String
+  description   String
+  requirements  String[]
+  tags          String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@unique([opportunityId, locale])
+  @@index([locale])
 }
 
 model User {

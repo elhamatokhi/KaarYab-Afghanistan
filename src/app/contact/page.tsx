@@ -1,44 +1,46 @@
 import type { Metadata } from "next";
 import { Mail, MessageSquareText, Send, ShieldCheck } from "lucide-react";
-import { Badge, PageContainer, PageHeader } from "@/components/ui";
+import { PageContainer, PageHeader } from "@/components/ui";
+import { getI18n } from "@/i18n/server";
 import { ContactForm } from "./contact-form";
 
-export const metadata: Metadata = {
-  title: "Contact KaarYab Afghanistan | Project inquiries",
-  description:
-    "Contact the KaarYab Afghanistan capstone project team with feedback, partnership ideas, demo questions, and future opportunity-submission inquiries.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+
+  return {
+    title: `${t("contact.badge")} | KaarYab Afghanistan`,
+    description: t("contact.description"),
+  };
+}
 
 const contactReasons = [
   {
-    title: "Share feedback",
-    description:
-      "Suggest improvements to the experience, content structure, or accessibility.",
+    titleKey: "contact.feedbackTitle",
+    descriptionKey: "contact.feedbackDescription",
     icon: MessageSquareText,
   },
   {
-    title: "Discuss future listings",
-    description:
-      "Ask how real opportunities could be submitted once database workflows exist.",
+    titleKey: "contact.listingsTitle",
+    descriptionKey: "contact.listingsDescription",
     icon: Send,
   },
   {
-    title: "Ask project questions",
-    description:
-      "Contact the capstone team about scope, roadmap, or current limitations.",
+    titleKey: "contact.questionsTitle",
+    descriptionKey: "contact.questionsDescription",
     icon: Mail,
   },
-];
+] as const;
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { t } = await getI18n();
+
   return (
     <PageContainer>
       <div className="space-y-10">
         <div className="space-y-4">
-          <Badge tone="accent">Contact KaarYab</Badge>
           <PageHeader
-            title="Send questions, feedback, or future collaboration ideas."
-            description="Use this page to share feedback, ask a question, or discuss future collaboration ideas for KaarYab."
+            title={t("contact.title")}
+            description={t("contact.description")}
           />
         </div>
 
@@ -47,24 +49,24 @@ export default function ContactPage() {
           className="grid gap-4 md:grid-cols-3"
         >
           <h2 id="contact-reasons-heading" className="sr-only">
-            Reasons to contact KaarYab
+            {t("contact.reasons")}
           </h2>
           {contactReasons.map((reason) => {
             const Icon = reason.icon;
 
             return (
               <article
-                key={reason.title}
+                key={reason.titleKey}
                 className="rounded-lg border border-border bg-card p-5"
               >
                 <div className="inline-flex size-10 items-center justify-center rounded-md bg-secondary-action text-secondary-action-foreground">
                   <Icon aria-hidden="true" className="size-5" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-primary">
-                  {reason.title}
+                  {t(reason.titleKey)}
                 </h3>
                 <p className="mt-2 text-sm leading-6 text-muted">
-                  {reason.description}
+                  {t(reason.descriptionKey)}
                 </p>
               </article>
             );
@@ -79,13 +81,13 @@ export default function ContactPage() {
               <ShieldCheck aria-hidden="true" className="size-5" />
             </div>
             <h2 className="text-xl font-semibold text-primary">
-              Contact status
+              {t("contact.status")}
             </h2>
             <p className="text-sm leading-6 text-muted">
-              Messages are not delivered to a real inbox yet.
+              {t("contact.statusOne")}
             </p>
             <p className="text-sm leading-6 text-muted">
-              The form will clearly confirm this after submission.
+              {t("contact.statusTwo")}
             </p>
           </aside>
         </section>

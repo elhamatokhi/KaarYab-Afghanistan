@@ -9,6 +9,7 @@ import {
   OPPORTUNITY_CATEGORIES,
   WORK_MODE_TO_PRISMA,
 } from "@/features/opportunities/constants";
+import type { Locale } from "@/i18n/config";
 import type {
   EmploymentType,
   IsoDateString,
@@ -20,6 +21,22 @@ import type {
   OpportunityCreateInput,
   OpportunityUpdateInput,
 } from "@/features/opportunities/validation";
+
+export type OpportunityTranslationInput = Pick<
+  Opportunity,
+  | "country"
+  | "description"
+  | "location"
+  | "organization"
+  | "requirements"
+  | "tags"
+  | "title"
+>;
+
+type OpportunityCanonicalSharedInput = Pick<
+  OpportunityUpdateInput,
+  "applyLink" | "category" | "deadline" | "employmentType" | "featured" | "workMode"
+>;
 
 const WORK_MODE_FROM_PRISMA = {
   REMOTE: "remote",
@@ -51,6 +68,57 @@ export async function getOpportunityById(id: string) {
     });
 
     return opportunity ? mapPrismaOpportunityToOpportunity(opportunity) : null;
+  });
+}
+
+export async function getOpportunityTranslation(
+  opportunityId: string,
+  locale: Locale,
+) {
+  return runOpportunityQuery(async () => {
+    const translation = await prisma.opportunityTranslation.findUnique({
+      where: {
+        opportunityId_locale: {
+          locale,
+          opportunityId,
+        },
+      },
+    });
+
+    return translation
+      ? {
+          country: translation.country,
+          description: translation.description,
+          location: translation.location,
+          organization: translation.organization,
+          requirements: translation.requirements,
+          tags: translation.tags,
+          title: translation.title,
+        }
+      : null;
+  });
+}
+
+export async function getOpportunityTranslations(locale: Locale) {
+  return runOpportunityQuery(async () => {
+    const translations = await prisma.opportunityTranslation.findMany({
+      where: { locale },
+    });
+
+    return Object.fromEntries(
+      translations.map((translation) => [
+        translation.opportunityId,
+        {
+          country: translation.country,
+          description: translation.description,
+          location: translation.location,
+          organization: translation.organization,
+          requirements: translation.requirements,
+          tags: translation.tags,
+          title: translation.title,
+        },
+      ]),
+    ) as Record<string, OpportunityTranslationInput>;
   });
 }
 
@@ -99,6 +167,59 @@ export async function updateOpportunity(
     });
 
     return mapPrismaOpportunityToOpportunity(opportunity);
+  });
+}
+
+export async function updateOpportunityCanonicalSharedFields(
+  id: string,
+  input: OpportunityCanonicalSharedInput,
+) {
+  return updateOpportunity(id, input);
+}
+
+export async function upsertOpportunityTranslation({
+  input,
+  locale,
+  opportunityId,
+}: {
+  input: OpportunityTranslationInput;
+  locale: Locale;
+  opportunityId: string;
+}) {
+  return runOpportunityQuery(async () => {
+    const existingOpportunity = await prisma.opportunity.findUnique({
+      where: { id: opportunityId },
+      select: { id: true },
+    });
+
+    if (!existingOpportunity) {
+      return null;
+    }
+
+    const translation = await prisma.opportunityTranslation.upsert({
+      where: {
+        opportunityId_locale: {
+          locale,
+          opportunityId,
+        },
+      },
+      create: {
+        ...input,
+        locale,
+        opportunityId,
+      },
+      update: input,
+    });
+
+    return {
+      country: translation.country,
+      description: translation.description,
+      location: translation.location,
+      organization: translation.organization,
+      requirements: translation.requirements,
+      tags: translation.tags,
+      title: translation.title,
+    };
   });
 }
 

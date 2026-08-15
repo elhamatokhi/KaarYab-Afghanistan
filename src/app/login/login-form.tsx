@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import { getDemoLoginFormValues } from "@/features/auth/demo-accounts";
 import { loginInputSchema, type LoginInput } from "@/features/auth/validation";
 import { zodToHookFormErrors } from "@/features/auth/auth-form-utils";
+import { useI18n } from "@/i18n/client";
+import { translateValidationMessage } from "@/i18n/validation";
 import { cn } from "@/lib/utils";
 
 type DemoLoginAccount = {
@@ -38,6 +40,7 @@ const loginResolver: Resolver<LoginInput> = async (values) => {
 export function LoginForm({ demoAccounts }: LoginFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useI18n();
   const callbackUrl = getSafeCallbackUrl(searchParams.get("callbackUrl"));
   const {
     formState: { errors, isSubmitting },
@@ -64,7 +67,7 @@ export function LoginForm({ demoAccounts }: LoginFormProps) {
     if (result?.error) {
       setError("root", {
         type: "auth",
-        message: "Invalid email or password.",
+        message: t("auth.invalidCredentials"),
       });
       return;
     }
@@ -109,26 +112,32 @@ export function LoginForm({ demoAccounts }: LoginFormProps) {
         className="rounded-md border border-border bg-surface p-4"
       >
         <h2 id="demo-accounts-heading" className="text-base font-semibold text-primary">
-          Demo accounts
+          {t("auth.demoAccounts")}
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted">
-          The Admin demo account can manage opportunities.
+          {t("auth.demoWarning")}
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <DemoAccountCard
-            title="Demo User"
+            title={t("auth.demoUser")}
             account={demoAccounts.user}
             onFill={() => fillDemoAccount(demoAccounts.user)}
+            useLabel={t("auth.useAccount", { title: t("auth.demoUser") })}
+            emailLabel={t("common.email")}
+            passwordLabel={t("common.password")}
           />
           <DemoAccountCard
-            title="Demo Admin"
+            title={t("auth.demoAdmin")}
             account={demoAccounts.admin}
             onFill={() => fillDemoAccount(demoAccounts.admin)}
+            useLabel={t("auth.useAccount", { title: t("auth.demoAdmin") })}
+            emailLabel={t("common.email")}
+            passwordLabel={t("common.password")}
           />
         </div>
       </section>
 
-      <FormField id="login-email" label="Email" error={errors.email?.message}>
+      <FormField id="login-email" label={t("common.email")} error={errors.email?.message}>
         <input
           id="login-email"
           type="email"
@@ -143,7 +152,7 @@ export function LoginForm({ demoAccounts }: LoginFormProps) {
 
       <FormField
         id="login-password"
-        label="Password"
+        label={t("common.password")}
         error={errors.password?.message}
       >
         <input
@@ -163,9 +172,9 @@ export function LoginForm({ demoAccounts }: LoginFormProps) {
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted">
-          Need an account?{" "}
+          {t("auth.needAccount")}{" "}
           <Link href="/register" className="font-semibold text-action">
-            Register
+            {t("common.register")}
           </Link>
         </p>
         <button
@@ -173,7 +182,7 @@ export function LoginForm({ demoAccounts }: LoginFormProps) {
           disabled={isSubmitting}
           className="inline-flex min-h-11 items-center justify-center rounded-md bg-action px-5 py-2 text-sm font-semibold text-action-foreground transition hover:bg-action-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? "Logging in..." : "Login"}
+          {isSubmitting ? t("auth.loggingIn") : t("common.login")}
         </button>
       </div>
     </form>
@@ -182,23 +191,29 @@ export function LoginForm({ demoAccounts }: LoginFormProps) {
 
 function DemoAccountCard({
   account,
+  emailLabel,
   onFill,
+  passwordLabel,
   title,
+  useLabel,
 }: {
   account: DemoLoginAccount;
+  emailLabel: string;
   onFill: () => void;
+  passwordLabel: string;
   title: string;
+  useLabel: string;
 }) {
   return (
     <div className="rounded-md border border-border bg-card p-3">
       <h3 className="text-sm font-semibold text-primary">{title}</h3>
       <dl className="mt-2 space-y-1 text-xs leading-5 text-muted">
         <div>
-          <dt className="font-medium text-primary">Email</dt>
+          <dt className="font-medium text-primary">{emailLabel}</dt>
           <dd className="break-all">{account.email}</dd>
         </div>
         <div>
-          <dt className="font-medium text-primary">Password</dt>
+          <dt className="font-medium text-primary">{passwordLabel}</dt>
           <dd className="break-all">{account.password}</dd>
         </div>
       </dl>
@@ -207,7 +222,7 @@ function DemoAccountCard({
         onClick={onFill}
         className="mt-3 inline-flex min-h-10 w-full items-center justify-center rounded-md border border-border bg-surface px-3 py-2 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
       >
-        Use {title}
+        {useLabel}
       </button>
     </div>
   );
@@ -236,15 +251,20 @@ function FormField({
   id: string;
   label: string;
 }) {
+  const { locale } = useI18n();
+  const translatedError = error
+    ? translateValidationMessage(error, locale)
+    : undefined;
+
   return (
     <div>
       <label htmlFor={id} className="text-sm font-semibold text-primary">
         {label}
       </label>
       <div className="mt-2">{children}</div>
-      {error ? (
+      {translatedError ? (
         <p id={`${id}-error`} role="alert" className="mt-2 text-sm text-danger">
-          {error}
+          {translatedError}
         </p>
       ) : null}
     </div>

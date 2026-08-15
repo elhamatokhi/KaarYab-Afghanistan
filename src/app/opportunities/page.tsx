@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { FilterX } from "lucide-react";
-import { Badge, PageContainer, PageHeader } from "@/components/ui";
+import { PageContainer, PageHeader } from "@/components/ui";
 import { OpportunityFilterControls } from "@/app/opportunities/opportunity-filter-controls";
-import { getAllOpportunities } from "@/features/opportunities/data";
+import {
+  getAllOpportunities,
+  getOpportunityTranslations,
+} from "@/features/opportunities/data";
+import { localizeDemoOpportunities } from "@/features/opportunities/demo-localization";
 import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
 import type { OpportunitySearchParams } from "@/features/opportunities/types";
 import {
@@ -11,6 +15,8 @@ import {
   hasActiveOpportunityFilters,
   parseOpportunitySearchParams,
 } from "@/features/opportunities/utils";
+import { formatLocalizedNumber } from "@/i18n/format";
+import { getI18n } from "@/i18n/server";
 
 type OpportunitiesPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -21,13 +27,26 @@ export default async function OpportunitiesPage({
 }: OpportunitiesPageProps) {
   const parsedSearchParams = parseOpportunitySearchParams(await searchParams);
   const opportunities = await getOpportunitiesForPage();
+  const { locale, t } = await getI18n();
 
   if (!opportunities) {
-    return <OpportunityDataErrorPage />;
+    return (
+      <OpportunityDataErrorPage
+        title={t("opportunities.unavailableTitle")}
+        description={t("opportunities.unavailableDescription")}
+      />
+    );
   }
 
-  const filteredOpportunities = getFilteredAndSortedOpportunities(
+  const storedTranslations =
+    locale === "en" ? {} : await getOpportunityTranslations(locale);
+  const localizedOpportunities = localizeDemoOpportunities(
     opportunities,
+    locale,
+    storedTranslations,
+  );
+  const filteredOpportunities = getFilteredAndSortedOpportunities(
+    localizedOpportunities,
     parsedSearchParams,
   );
   const hasActiveFilters = hasActiveOpportunityFilters(
@@ -38,28 +57,36 @@ export default async function OpportunitiesPage({
     <PageContainer>
       <div className="space-y-8">
         <div className="space-y-4">
-          <Badge tone="accent">Opportunity discovery</Badge>
           <PageHeader
-            eyebrow="Opportunity discovery"
-            title="Explore opportunities"
-            description="Browse jobs, internships, scholarships, courses, remote roles, training programs, and volunteer opportunities."
+            title={t("opportunities.title")}
+            description={t("opportunities.description")}
           />
           <p className="max-w-3xl text-sm leading-6 text-muted">
-            {opportunities.length} opportunities are available.
+            {t("opportunities.available", {
+              count: formatLocalizedNumber(opportunities.length, locale),
+            })}
           </p>
         </div>
 
         <OpportunityFiltersForm
           params={parsedSearchParams}
           hasActiveFilters={hasActiveFilters}
+          labels={{
+            clear: t("common.clearAllFilters"),
+            description: t("opportunities.filtersDescription"),
+            title: t("opportunities.filtersTitle"),
+          }}
         />
 
         <OpportunityList
           opportunities={filteredOpportunities}
-          heading="Opportunity results"
-          countLabel={`Showing ${filteredOpportunities.length} of ${opportunities.length} listings`}
-          emptyTitle="No matching opportunities"
-          emptyDescription="No opportunities match the selected search, filters, and sorting options. Clear the filters or try a broader search."
+          heading={t("opportunities.resultsHeading")}
+          countLabel={t("opportunities.resultCount", {
+            shown: formatLocalizedNumber(filteredOpportunities.length, locale),
+            total: formatLocalizedNumber(opportunities.length, locale),
+          })}
+          emptyTitle={t("opportunities.emptyTitle")}
+          emptyDescription={t("opportunities.emptyDescription")}
         />
       </div>
     </PageContainer>
@@ -74,16 +101,19 @@ async function getOpportunitiesForPage() {
   }
 }
 
-function OpportunityDataErrorPage() {
+function OpportunityDataErrorPage({
+  description,
+  title,
+}: {
+  description: string;
+  title: string;
+}) {
   return (
     <PageContainer>
       <section className="rounded-lg border border-border bg-card px-5 py-10 text-center">
-        <h1 className="text-2xl font-semibold text-primary">
-          Opportunities are temporarily unavailable
-        </h1>
+        <h1 className="text-2xl font-semibold text-primary">{title}</h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
-          KaarYab could not load opportunity listings right now. Please try
-          again later.
+          {description}
         </p>
       </section>
     </PageContainer>
@@ -92,9 +122,15 @@ function OpportunityDataErrorPage() {
 
 function OpportunityFiltersForm({
   hasActiveFilters,
+  labels,
   params,
 }: {
   hasActiveFilters: boolean;
+  labels: {
+    clear: string;
+    description: string;
+    title: string;
+  };
   params: OpportunitySearchParams;
 }) {
   return (
@@ -108,11 +144,10 @@ function OpportunityFiltersForm({
             id="opportunity-filters-heading"
             className="text-xl font-semibold text-primary"
           >
-            Search and filter
+            {labels.title}
           </h2>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Narrow the list by keyword, category, location, work mode, type, and
-            deadline.
+            {labels.description}
           </p>
         </div>
         {hasActiveFilters ? (
@@ -121,7 +156,7 @@ function OpportunityFiltersForm({
             className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
           >
             <FilterX aria-hidden="true" className="size-4" />
-            Clear all filters
+            {labels.clear}
           </Link>
         ) : null}
       </div>

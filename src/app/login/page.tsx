@@ -1,23 +1,28 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PageContainer, PageHeader } from "@/components/ui";
+import { getI18n } from "@/i18n/server";
 import { LoginForm } from "@/app/login/login-form";
 
-export const metadata: Metadata = {
-  title: "Login | KaarYab Afghanistan",
-  description: "Login to KaarYab Afghanistan with email and password.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
 
-export default function LoginPage() {
+  return {
+    title: `${t("auth.loginTitle")} | KaarYab Afghanistan`,
+    description: t("auth.loginDescription"),
+  };
+}
+
+export default async function LoginPage() {
   const demoAccounts = getDemoAccounts();
+  const { t } = await getI18n();
 
   return (
     <PageContainer>
       <div className="mx-auto max-w-xl space-y-8">
         <PageHeader
-          eyebrow="Account access"
-          title="Login"
-          description="Use your email and password to access your KaarYab account."
+          title={t("auth.loginTitle")}
+          description={t("auth.loginDescription")}
         />
         <Suspense fallback={null}>
           <LoginForm demoAccounts={demoAccounts} />

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { getI18n } from "@/i18n/server";
 import "./globals.css";
 
 const kaaryabSans = localFont({
@@ -22,18 +23,21 @@ export const metadata: Metadata = {
   description: "Opportunity finder foundation for Afghan youth.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const { dir, locale, messages, t } = await getI18n();
+
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={dir}
       className={`${kaaryabSans.variable} ${kaaryabMono.variable} h-full antialiased`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-page text-primary">
-        <Providers>
+        <Providers locale={locale} messages={messages}>
           <a href="#main-content" className="skip-to-content">
-            Skip to content
+            {t("nav.skip")}
           </a>
           <SiteHeader />
           <main id="main-content" className="flex-1" tabIndex={-1}>

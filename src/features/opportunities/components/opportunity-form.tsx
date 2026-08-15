@@ -20,6 +20,14 @@ import {
   opportunityCreateInputSchema,
   opportunityUpdateInputSchema,
 } from "@/features/opportunities/validation";
+import { useI18n } from "@/i18n/client";
+import {
+  CATEGORY_MESSAGE_KEYS,
+  EMPLOYMENT_TYPE_MESSAGE_KEYS,
+  WORK_MODE_MESSAGE_KEYS,
+} from "@/i18n/options";
+import { translateValidationMessage } from "@/i18n/validation";
+import type { Locale } from "@/i18n/config";
 import { cn } from "@/lib/utils";
 
 type OpportunityFormMode = "create" | "edit";
@@ -27,6 +35,7 @@ type OpportunityFormMode = "create" | "edit";
 type OpportunityFormProps = {
   mode: OpportunityFormMode;
   defaultValues?: OpportunityFormValues;
+  locale?: Locale;
   opportunityId?: string;
   cancelHref: string;
 };
@@ -79,10 +88,12 @@ const opportunityFormResolver: Resolver<OpportunityFormValues> = async (
 export function OpportunityForm({
   cancelHref,
   defaultValues = createBlankOpportunityFormValues(),
+  locale = "en",
   mode,
   opportunityId,
 }: OpportunityFormProps) {
   const router = useRouter();
+  const { t } = useI18n();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -107,9 +118,7 @@ export function OpportunityForm({
     }
 
     const response = await fetch(
-      mode === "create"
-        ? "/api/opportunities"
-        : `/api/opportunities/${opportunityId}`,
+      getSubmissionUrl({ locale, mode, opportunityId }),
       {
         method: mode === "create" ? "POST" : "PATCH",
         headers: { "content-type": "application/json" },
@@ -118,7 +127,7 @@ export function OpportunityForm({
     );
 
     if (!response.ok) {
-      await applyApiError(response, setError);
+      await applyApiError(response, setError, t("opportunityForm.saveError"));
       return;
     }
 
@@ -128,7 +137,7 @@ export function OpportunityForm({
     if (!redirectId) {
       setError("root", {
         type: "server",
-        message: "The saved opportunity could not be opened.",
+        message: t("opportunityForm.openError"),
       });
       return;
     }
@@ -154,7 +163,7 @@ export function OpportunityForm({
       ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField id="opportunity-title" label="Title" error={errors.title?.message}>
+        <FormField id="opportunity-title" label={t("common.title")} error={errors.title?.message}>
           <input
             id="opportunity-title"
             type="text"
@@ -172,7 +181,7 @@ export function OpportunityForm({
 
         <FormField
           id="opportunity-organization"
-          label="Organization"
+          label={t("common.organization")}
           error={errors.organization?.message}
         >
           <input
@@ -194,7 +203,7 @@ export function OpportunityForm({
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <FormField
           id="opportunity-category"
-          label="Category"
+          label={t("common.category")}
           error={errors.category?.message}
         >
           <select
@@ -208,10 +217,10 @@ export function OpportunityForm({
             )}
             {...register("category")}
           >
-            <option value="">Select category</option>
+            <option value="">{t("opportunityForm.selectCategory")}</option>
             {OPPORTUNITY_CATEGORIES.map((category) => (
               <option key={category.value} value={category.value}>
-                {category.label}
+                {t(CATEGORY_MESSAGE_KEYS[category.value])}
               </option>
             ))}
           </select>
@@ -219,7 +228,7 @@ export function OpportunityForm({
 
         <FormField
           id="opportunity-work-mode"
-          label="Work mode"
+          label={t("common.workMode")}
           error={errors.workMode?.message}
         >
           <select
@@ -233,10 +242,10 @@ export function OpportunityForm({
             )}
             {...register("workMode")}
           >
-            <option value="">Select mode</option>
+            <option value="">{t("opportunityForm.selectMode")}</option>
             {WORK_MODES.map((workMode) => (
               <option key={workMode.value} value={workMode.value}>
-                {workMode.label}
+                {t(WORK_MODE_MESSAGE_KEYS[workMode.value])}
               </option>
             ))}
           </select>
@@ -244,7 +253,7 @@ export function OpportunityForm({
 
         <FormField
           id="opportunity-employment-type"
-          label="Opportunity type"
+          label={t("opportunityForm.opportunityType")}
           error={errors.employmentType?.message}
         >
           <select
@@ -258,10 +267,10 @@ export function OpportunityForm({
             )}
             {...register("employmentType")}
           >
-            <option value="">Select type</option>
+            <option value="">{t("opportunityForm.selectType")}</option>
             {EMPLOYMENT_TYPES.map((employmentType) => (
               <option key={employmentType.value} value={employmentType.value}>
-                {employmentType.label}
+                {t(EMPLOYMENT_TYPE_MESSAGE_KEYS[employmentType.value])}
               </option>
             ))}
           </select>
@@ -269,7 +278,7 @@ export function OpportunityForm({
 
         <FormField
           id="opportunity-deadline"
-          label="Deadline"
+          label={t("common.deadline")}
           error={errors.deadline?.message}
         >
           <input
@@ -290,7 +299,7 @@ export function OpportunityForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField
           id="opportunity-location"
-          label="Location"
+          label={t("common.location")}
           error={errors.location?.message}
         >
           <input
@@ -310,7 +319,7 @@ export function OpportunityForm({
 
         <FormField
           id="opportunity-country"
-          label="Country"
+          label={t("common.country")}
           error={errors.country?.message}
         >
           <input
@@ -331,7 +340,7 @@ export function OpportunityForm({
 
       <FormField
         id="opportunity-description"
-        label="Description"
+        label={t("common.description")}
         error={errors.description?.message}
       >
         <textarea
@@ -352,9 +361,9 @@ export function OpportunityForm({
       <div className="grid gap-5 lg:grid-cols-2">
         <FormField
           id="opportunity-requirements"
-          label="Requirements"
+          label={t("common.requirements")}
           error={errors.requirements?.message}
-          hint="Enter one requirement per line."
+          hint={t("opportunityForm.requirementsHint")}
         >
           <textarea
             id="opportunity-requirements"
@@ -373,9 +382,9 @@ export function OpportunityForm({
 
         <FormField
           id="opportunity-tags"
-          label="Tags"
+          label={t("common.tags")}
           error={errors.tags?.message}
-          hint="Separate tags with commas."
+          hint={t("opportunityForm.tagsHint")}
         >
           <textarea
             id="opportunity-tags"
@@ -395,7 +404,7 @@ export function OpportunityForm({
 
       <FormField
         id="opportunity-apply-link"
-        label="Apply link"
+        label={t("common.applyLink")}
         error={errors.applyLink?.message}
       >
         <input
@@ -420,9 +429,9 @@ export function OpportunityForm({
             {...register("featured")}
           />
           <span>
-            <span className="font-semibold">Featured opportunity</span>
+            <span className="font-semibold">{t("common.featuredOpportunity")}</span>
             <span className="block text-muted">
-              Highlight this listing in featured sections.
+              {t("opportunityForm.featuredHelp")}
             </span>
           </span>
         </label>
@@ -430,14 +439,14 @@ export function OpportunityForm({
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-muted">
-          All fields except featured status are required.
+          {t("form.requiredExceptFeatured")}
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
           <Link
             href={cancelHref}
             className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-5 py-2 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
           >
-            Cancel
+            {t("common.cancel")}
           </Link>
           <button
             type="submit"
@@ -446,16 +455,36 @@ export function OpportunityForm({
           >
             {isSubmitting
               ? mode === "create"
-                ? "Creating..."
-                : "Saving..."
+                ? t("opportunityForm.creating")
+                : t("opportunityForm.saving")
               : mode === "create"
-                ? "Create opportunity"
-                : "Save changes"}
+                ? t("opportunityForm.createButton")
+                : t("opportunityForm.saveButton")}
           </button>
         </div>
       </div>
     </form>
   );
+}
+
+function getSubmissionUrl({
+  locale,
+  mode,
+  opportunityId,
+}: {
+  locale: Locale;
+  mode: OpportunityFormMode;
+  opportunityId?: string;
+}) {
+  if (mode === "create") {
+    return "/api/opportunities";
+  }
+
+  if (locale !== "en") {
+    return `/api/opportunities/${opportunityId}/translations/${locale}`;
+  }
+
+  return `/api/opportunities/${opportunityId}`;
 }
 
 function formValuesToPayload(values: OpportunityFormValues) {
@@ -470,6 +499,7 @@ function formValuesToPayload(values: OpportunityFormValues) {
 async function applyApiError(
   response: Response,
   setError: ReturnType<typeof useForm<OpportunityFormValues>>["setError"],
+  fallbackMessage: string,
 ) {
   const body = await readJsonSafely(response);
   const fields = body?.error?.fields;
@@ -488,9 +518,7 @@ async function applyApiError(
 
   setError("root", {
     type: "server",
-    message:
-      body?.error?.message ??
-      "The opportunity could not be saved. Please try again.",
+    message: body?.error?.message ?? fallbackMessage,
   });
 }
 
@@ -559,6 +587,11 @@ type FormFieldProps = {
 };
 
 function FormField({ children, error, hint, id, label }: FormFieldProps) {
+  const { locale } = useI18n();
+  const translatedError = error
+    ? translateValidationMessage(error, locale)
+    : undefined;
+
   return (
     <div>
       <label htmlFor={id} className="text-sm font-semibold text-primary">
@@ -574,9 +607,9 @@ function FormField({ children, error, hint, id, label }: FormFieldProps) {
           {hint}
         </p>
       ) : null}
-      {error ? (
+      {translatedError ? (
         <p id={`${id}-error`} role="alert" className="mt-2 text-sm text-danger">
-          {error}
+          {translatedError}
         </p>
       ) : null}
     </div>

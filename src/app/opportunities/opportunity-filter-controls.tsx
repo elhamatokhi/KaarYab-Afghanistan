@@ -11,6 +11,14 @@ import {
 } from "@/features/opportunities/constants";
 import type { OpportunitySearchParams } from "@/features/opportunities/types";
 import { DEFAULT_OPPORTUNITY_SORT } from "@/features/opportunities/utils";
+import { useI18n } from "@/i18n/client";
+import {
+  CATEGORY_MESSAGE_KEYS,
+  DEADLINE_STATUS_MESSAGE_KEYS,
+  EMPLOYMENT_TYPE_MESSAGE_KEYS,
+  SORT_MESSAGE_KEYS,
+  WORK_MODE_MESSAGE_KEYS,
+} from "@/i18n/options";
 
 type OpportunityFilterControlsProps = {
   params: OpportunitySearchParams;
@@ -22,6 +30,7 @@ export function OpportunityFilterControls({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useI18n();
   const [isPending, startTransition] = useTransition();
   const { filters, sort } = params;
   const [searchValue, setSearchValue] = useState(filters.query);
@@ -94,18 +103,18 @@ export function OpportunityFilterControls({
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <TextField
           id="opportunity-search"
-          label="Search title or organization"
+          label={t("filters.searchLabel")}
           name="search"
-          placeholder="Try scholarship, CodeBridge, data"
+          placeholder={t("filters.searchPlaceholder")}
           value={searchValue}
           onChange={setSearchValue}
           disabled={false}
         />
         <TextField
           id="opportunity-location"
-          label="Country or location"
+          label={t("filters.locationLabel")}
           name="location"
-          placeholder="Try Afghanistan, Online, Herat"
+          placeholder={t("filters.locationPlaceholder")}
           defaultValue={filters.countryOrLocation}
           disabled={isPending}
         />
@@ -114,47 +123,67 @@ export function OpportunityFilterControls({
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <SelectField
           id="opportunity-category"
-          label="Category"
+          label={t("common.category")}
           name="category"
           value={filters.category}
-          options={OPPORTUNITY_CATEGORIES}
+          options={OPPORTUNITY_CATEGORIES.map((category) => ({
+            value: category.value,
+            label: t(CATEGORY_MESSAGE_KEYS[category.value]),
+          }))}
+          allLabel={t("common.all")}
           disabled={isPending}
           onChange={replaceParam}
         />
         <SelectField
           id="opportunity-work-mode"
-          label="Work mode"
+          label={t("common.workMode")}
           name="workMode"
           value={filters.workMode}
-          options={WORK_MODES}
+          options={WORK_MODES.map((workMode) => ({
+            value: workMode.value,
+            label: t(WORK_MODE_MESSAGE_KEYS[workMode.value]),
+          }))}
+          allLabel={t("common.all")}
           disabled={isPending}
           onChange={replaceParam}
         />
         <SelectField
           id="opportunity-employment-type"
-          label="Type"
+          label={t("common.type")}
           name="employmentType"
           value={filters.employmentType}
-          options={EMPLOYMENT_TYPES}
+          options={EMPLOYMENT_TYPES.map((employmentType) => ({
+            value: employmentType.value,
+            label: t(EMPLOYMENT_TYPE_MESSAGE_KEYS[employmentType.value]),
+          }))}
+          allLabel={t("common.all")}
           disabled={isPending}
           onChange={replaceParam}
         />
         <SelectField
           id="opportunity-deadline-status"
-          label="Deadline"
+          label={t("common.deadline")}
           name="deadlineStatus"
           value={filters.deadlineStatus}
-          options={DEADLINE_STATUSES}
+          options={DEADLINE_STATUSES.map((deadlineStatus) => ({
+            value: deadlineStatus.value,
+            label: t(DEADLINE_STATUS_MESSAGE_KEYS[deadlineStatus.value]),
+          }))}
+          allLabel={t("common.all")}
           disabled={isPending}
           onChange={replaceParam}
         />
         <SelectField
           id="opportunity-sort"
-          label="Sort by"
+          label={t("filters.sortBy")}
           name="sort"
           value={sort}
-          options={OPPORTUNITY_SORT_OPTIONS}
+          options={OPPORTUNITY_SORT_OPTIONS.map((sortOption) => ({
+            value: sortOption.value,
+            label: t(SORT_MESSAGE_KEYS[sortOption.value]),
+          }))}
           includeAllOption={false}
+          allLabel={t("common.all")}
           disabled={isPending}
           onChange={replaceParam}
         />
@@ -162,10 +191,10 @@ export function OpportunityFilterControls({
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-muted">
-          Search matches opportunity title and organization.
+          {t("filters.searchHelp")}
         </p>
         <p aria-live="polite" className="min-h-5 text-xs leading-5 text-muted">
-          {isPending ? "Updating results..." : ""}
+          {isPending ? t("filters.updating") : ""}
         </p>
       </div>
     </form>
@@ -212,6 +241,7 @@ function TextField({
 }
 
 function SelectField<TOption extends string>({
+  allLabel,
   disabled,
   id,
   includeAllOption = true,
@@ -221,6 +251,7 @@ function SelectField<TOption extends string>({
   options,
   value,
 }: {
+  allLabel: string;
   disabled: boolean;
   id: string;
   includeAllOption?: boolean;
@@ -243,7 +274,7 @@ function SelectField<TOption extends string>({
         onChange={(event) => onChange(name, event.currentTarget.value)}
         className="mt-2 min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-primary disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {includeAllOption ? <option value="all">All</option> : null}
+        {includeAllOption ? <option value="all">{allLabel}</option> : null}
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

@@ -4,11 +4,9 @@ import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui";
-import {
-  CATEGORY_LABELS,
-} from "@/features/opportunities/constants";
 import type { Opportunity } from "@/features/opportunities/types";
-import { formatOpportunityDate } from "@/features/opportunities/utils";
+import { useI18n } from "@/i18n/client";
+import { CATEGORY_MESSAGE_KEYS } from "@/i18n/options";
 
 type DashboardOpportunityManagerProps = {
   initialOpportunities: Opportunity[];
@@ -22,6 +20,7 @@ type DeleteState =
 export function DashboardOpportunityManager({
   initialOpportunities,
 }: DashboardOpportunityManagerProps) {
+  const { formatDate, t } = useI18n();
   const [opportunities, setOpportunities] = useState(initialOpportunities);
   const [deleteTarget, setDeleteTarget] = useState<Opportunity | null>(null);
   const [deleteState, setDeleteState] = useState<DeleteState>({ status: "idle" });
@@ -56,7 +55,7 @@ export function DashboardOpportunityManager({
         if (!response.ok) {
           setDeleteState({
             status: "error",
-            message: "The opportunity could not be deleted. Please try again.",
+            message: t("dashboard.deleteError"),
           });
           return;
         }
@@ -67,12 +66,12 @@ export function DashboardOpportunityManager({
         setDeleteTarget(null);
         setDeleteState({
           status: "success",
-          message: `${opportunity.title} was deleted.`,
+          message: t("dashboard.deleteSuccess", { title: opportunity.title }),
         });
       } catch {
         setDeleteState({
           status: "error",
-          message: "The opportunity could not be deleted. Please try again.",
+          message: t("dashboard.deleteError"),
         });
       } finally {
         setPendingDeleteId(null);
@@ -93,17 +92,17 @@ export function DashboardOpportunityManager({
             id="opportunity-management-heading"
             className="text-xl font-semibold text-primary"
           >
-            Opportunity management
+            {t("dashboard.managementTitle")}
           </h2>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Review listings and manage individual records.
+            {t("dashboard.managementDescription")}
           </p>
         </div>
         <Link
           href="/add-opportunity"
           className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
         >
-          Add Opportunity
+          {t("common.addOpportunity")}
         </Link>
       </div>
 
@@ -130,27 +129,27 @@ export function DashboardOpportunityManager({
           <div className="mt-6 hidden overflow-x-auto lg:block">
             <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
               <caption className="sr-only">
-                Opportunity management records
+                {t("dashboard.recordsCaption")}
               </caption>
               <thead className="border-b border-border text-xs uppercase tracking-wide text-muted">
                 <tr>
                   <th scope="col" className="py-3 pr-4 font-semibold">
-                    Title
+                    {t("common.title")}
                   </th>
                   <th scope="col" className="px-4 py-3 font-semibold">
-                    Organization
+                    {t("common.organization")}
                   </th>
                   <th scope="col" className="px-4 py-3 font-semibold">
-                    Category
+                    {t("common.category")}
                   </th>
                   <th scope="col" className="px-4 py-3 font-semibold">
-                    Deadline
+                    {t("common.deadline")}
                   </th>
                   <th scope="col" className="px-4 py-3 font-semibold">
-                    Featured
+                    {t("common.featured")}
                   </th>
                   <th scope="col" className="py-3 pl-4 text-right font-semibold">
-                    Actions
+                    {t("common.actions")}
                   </th>
                 </tr>
               </thead>
@@ -164,11 +163,11 @@ export function DashboardOpportunityManager({
                       {opportunity.organization}
                     </td>
                     <td className="px-4 py-4 text-muted">
-                      {CATEGORY_LABELS[opportunity.category]}
+                      {t(CATEGORY_MESSAGE_KEYS[opportunity.category])}
                     </td>
                     <td className="px-4 py-4 text-muted">
                       <time dateTime={opportunity.deadline}>
-                        {formatOpportunityDate(opportunity.deadline)}
+                        {formatDate(opportunity.deadline)}
                       </time>
                     </td>
                     <td className="px-4 py-4">
@@ -206,16 +205,16 @@ export function DashboardOpportunityManager({
                 </div>
                 <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
                   <div>
-                    <dt className="font-medium text-primary">Category</dt>
+                    <dt className="font-medium text-primary">{t("common.category")}</dt>
                     <dd className="mt-1 text-muted">
-                      {CATEGORY_LABELS[opportunity.category]}
+                      {t(CATEGORY_MESSAGE_KEYS[opportunity.category])}
                     </dd>
                   </div>
                   <div>
-                    <dt className="font-medium text-primary">Deadline</dt>
+                    <dt className="font-medium text-primary">{t("common.deadline")}</dt>
                     <dd className="mt-1 text-muted">
                       <time dateTime={opportunity.deadline}>
-                        {formatOpportunityDate(opportunity.deadline)}
+                        {formatDate(opportunity.deadline)}
                       </time>
                     </dd>
                   </div>
@@ -234,17 +233,16 @@ export function DashboardOpportunityManager({
       ) : (
         <div className="mt-6 rounded-lg border border-border bg-surface p-6 text-center">
           <h3 className="text-lg font-semibold text-primary">
-            No opportunities to manage
+            {t("dashboard.emptyTitle")}
           </h3>
           <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
-            Add the first opportunity to start building the dashboard record
-            list.
+            {t("dashboard.emptyDescription")}
           </p>
           <Link
             href="/add-opportunity"
             className="mt-5 inline-flex min-h-10 items-center justify-center rounded-md bg-action px-4 py-2 text-sm font-semibold text-action-foreground transition hover:bg-action-hover"
           >
-            Add opportunity
+            {t("common.addOpportunity")}
           </Link>
         </div>
       )}
@@ -265,13 +263,13 @@ export function DashboardOpportunityManager({
               id="delete-opportunity-title"
               className="text-xl font-semibold text-primary"
             >
-              Delete opportunity?
+              {t("dashboard.deleteTitle")}
             </h2>
             <p
               id="delete-opportunity-description"
               className="mt-3 text-sm leading-6 text-muted"
             >
-              This will remove {deleteTarget.title} from KaarYab.
+              {t("dashboard.deleteDescription", { title: deleteTarget.title })}
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
               <button
@@ -280,7 +278,7 @@ export function DashboardOpportunityManager({
                 onClick={() => setDeleteTarget(null)}
                 className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary transition hover:bg-surface-elevated disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 type="button"
@@ -289,7 +287,7 @@ export function DashboardOpportunityManager({
                 className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-danger px-4 py-2 text-sm font-semibold text-action-foreground transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Trash2 aria-hidden="true" className="size-4" />
-                {isDeleting ? "Deleting..." : "Delete opportunity"}
+                {isDeleting ? t("dashboard.deleting") : t("dashboard.deleteOpportunity")}
               </button>
             </div>
           </div>
@@ -308,12 +306,14 @@ function ActionGroup({
   onDelete: () => void;
   opportunity: Opportunity;
 }) {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-wrap justify-start gap-2 lg:justify-end">
-      <ActionLink href={`/opportunities/${opportunity.id}`} label="View">
+      <ActionLink href={`/opportunities/${opportunity.id}`} label={t("common.view")}>
         <Eye aria-hidden="true" className="size-4" />
       </ActionLink>
-      <ActionLink href={`/opportunities/${opportunity.id}/edit`} label="Edit">
+      <ActionLink href={`/opportunities/${opportunity.id}/edit`} label={t("common.edit")}>
         <Pencil aria-hidden="true" className="size-4" />
       </ActionLink>
       <button
@@ -323,7 +323,7 @@ function ActionGroup({
         className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-danger/30 bg-danger-soft px-3 py-2 text-sm font-semibold text-danger transition hover:bg-danger/10 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Trash2 aria-hidden="true" className="size-4" />
-        {isDeleting ? "Deleting" : "Delete"}
+        {isDeleting ? t("dashboard.deletingShort") : t("common.delete")}
       </button>
     </div>
   );
@@ -350,5 +350,11 @@ function ActionLink({
 }
 
 function FeaturedBadge({ featured }: { featured: boolean }) {
-  return featured ? <Badge tone="warning">Featured</Badge> : <Badge>No</Badge>;
+  const { t } = useI18n();
+
+  return featured ? (
+    <Badge tone="warning">{t("common.featured")}</Badge>
+  ) : (
+    <Badge>{t("common.no")}</Badge>
+  );
 }

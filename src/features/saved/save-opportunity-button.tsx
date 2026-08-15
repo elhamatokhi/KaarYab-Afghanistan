@@ -11,6 +11,7 @@ import {
   setSavedOpportunities,
 } from "@/features/saved/saved-opportunities-slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useI18n } from "@/i18n/client";
 import { cn } from "@/lib/utils";
 
 type SaveOpportunityButtonProps = {
@@ -29,6 +30,7 @@ export function SaveOpportunityButton({
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
+  const { t } = useI18n();
   const [isPending, setIsPending] = useState(false);
   const isSaved = useAppSelector((state) =>
     selectIsOpportunitySaved(state, opportunityId),
@@ -41,8 +43,8 @@ export function SaveOpportunityButton({
   }
 
   const label = isSaved
-    ? "Remove from saved opportunities"
-    : "Save opportunity";
+    ? t("bookmark.remove")
+    : t("bookmark.save");
 
   async function toggleSaved(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();

@@ -24,20 +24,14 @@ export function PageContainer({ children, className }: ContainerProps) {
 }
 
 type PageHeaderProps = {
-  eyebrow?: string;
   title: string;
   description: string;
 };
 
-export function PageHeader({ eyebrow, title, description }: PageHeaderProps) {
+export function PageHeader({ title, description }: PageHeaderProps) {
   return (
     <header className="max-w-3xl">
-      {eyebrow ? (
-        <p className="text-sm font-semibold uppercase tracking-wide text-accent">
-          {eyebrow}
-        </p>
-      ) : null}
-      <h1 className="mt-3 text-3xl font-semibold tracking-normal text-primary sm:text-4xl">
+      <h1 className="text-3xl font-semibold tracking-normal text-primary sm:text-4xl">
         {title}
       </h1>
       <p className="mt-4 text-base leading-7 text-muted sm:text-lg">

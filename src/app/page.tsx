@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Globe2, Search, UsersRound } from "lucide-react";
-import { Badge, LinkButton, PageContainer, SectionHeading } from "@/components/ui";
+import { LinkButton, PageContainer, SectionHeading } from "@/components/ui";
 import { OPPORTUNITY_CATEGORIES } from "@/features/opportunities/constants";
 import {
   getAllOpportunities,
   getFeaturedOpportunities,
+  getOpportunityTranslations,
 } from "@/features/opportunities/data";
+import { localizeDemoOpportunities } from "@/features/opportunities/demo-localization";
 import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
 import { calculateDashboardStats } from "@/features/opportunities/utils";
+import { formatLocalizedNumber } from "@/i18n/format";
+import { getI18n } from "@/i18n/server";
+import { CATEGORY_MESSAGE_KEYS } from "@/i18n/options";
+import type { Locale } from "@/i18n/config";
 
 export const metadata: Metadata = {
   title: "KaarYab Afghanistan | Opportunity finder for Afghan youth",
@@ -18,41 +24,53 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-const targetUsers = [
-  "Students",
-  "Fresh graduates",
-  "Job seekers",
-  "Women seeking remote opportunities",
-  "Scholarship applicants",
-  "Internship seekers",
-];
+const targetUserKeys = [
+  "home.user.students",
+  "home.user.graduates",
+  "home.user.jobSeekers",
+  "home.user.remoteWomen",
+  "home.user.scholarship",
+  "home.user.internship",
+] as const;
 
 const howItWorksSteps = [
   {
-    title: "Discover",
-    description:
-      "Browse opportunities by category, location, work mode, and deadline as the listing experience grows.",
+    id: "discover",
+    titleKey: "home.step.discover.title",
+    descriptionKey: "home.step.discover.description",
   },
   {
-    title: "Review",
-    description:
-      "Open a detail page to understand the organization, requirements, deadline, and application path.",
+    id: "review",
+    titleKey: "home.step.review.title",
+    descriptionKey: "home.step.review.description",
   },
   {
-    title: "Act",
-    description:
-      "Use KaarYab as a focused starting point before applying through trusted external channels.",
+    id: "act",
+    titleKey: "home.step.act.title",
+    descriptionKey: "home.step.act.description",
   },
-];
+] as const;
 
 export default async function Home() {
   const data = await getHomeOpportunities();
+  const { locale, t } = await getI18n();
 
   if (!data) {
-    return <OpportunityDataErrorPage />;
+    return <OpportunityDataErrorPage title={t("opportunities.unavailableTitle")} description={t("opportunities.unavailableDescription")} />;
   }
 
-  const { featuredOpportunities, opportunities } = data;
+  const storedTranslations =
+    locale === "en" ? {} : await getOpportunityTranslations(locale);
+  const opportunities = localizeDemoOpportunities(
+    data.opportunities,
+    locale,
+    storedTranslations,
+  );
+  const featuredOpportunities = localizeDemoOpportunities(
+    data.featuredOpportunities,
+    locale,
+    storedTranslations,
+  );
   const stats = calculateDashboardStats(opportunities);
   const onlineCount = opportunities.filter(
     (opportunity) => opportunity.location === "Online",
@@ -67,19 +85,16 @@ export default async function Home() {
       <div className="space-y-14">
         <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-center">
           <div className="min-w-0">
-            <Badge tone="accent">Opportunity finder for Afghan youth</Badge>
-            <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight text-primary sm:text-5xl">
-              Find jobs, scholarships, training, and remote opportunities in one
-              focused place.
+            <h1 className="max-w-4xl text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+              {t("home.title")}
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted">
-              KaarYab Afghanistan helps young people find practical paths for
-              learning, work, service, and career growth.
+              {t("home.description")}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <LinkButton href="/opportunities">Browse opportunities</LinkButton>
+              <LinkButton href="/opportunities">{t("footer.browse")}</LinkButton>
               <LinkButton href="/contact" variant="secondary">
-                Contact KaarYab
+                {t("home.contactCta")}
               </LinkButton>
             </div>
           </div>
@@ -91,14 +106,14 @@ export default async function Home() {
             role="search"
           >
             <label htmlFor="home-search" className="text-sm font-semibold text-primary">
-              Search opportunities
+              {t("home.searchLabel")}
             </label>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row lg:flex-col">
               <input
                 id="home-search"
                 name="search"
                 type="search"
-                placeholder="Try scholarship, remote, Kabul"
+                placeholder={t("home.searchPlaceholder")}
                 className="min-h-11 min-w-0 flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-primary placeholder:text-muted"
               />
               <button
@@ -106,7 +121,7 @@ export default async function Home() {
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-action px-4 py-2 text-sm font-semibold text-action-foreground transition hover:bg-action-hover"
               >
                 <Search aria-hidden="true" className="size-4" />
-                Search
+                {t("common.search")}
               </button>
             </div>
           </form>
@@ -114,19 +129,19 @@ export default async function Home() {
 
         <section aria-labelledby="audience-heading" className="space-y-5">
           <SectionHeading
-            title="Built for practical opportunity discovery"
-            description="The platform is designed for Afghan youth and organizations that need a clear place to share and find learning, work, and service opportunities."
+            title={t("home.audienceTitle")}
+            description={t("home.audienceDescription")}
           />
           <h2 id="audience-heading" className="sr-only">
-            Target users
+            {t("home.targetUsers")}
           </h2>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {targetUsers.map((userGroup) => (
+            {targetUserKeys.map((userGroupKey) => (
               <li
-                key={userGroup}
+                key={userGroupKey}
                 className="rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-primary"
               >
-                {userGroup}
+                {t(userGroupKey)}
               </li>
             ))}
           </ul>
@@ -134,35 +149,37 @@ export default async function Home() {
 
         <section aria-labelledby="stats-heading" className="space-y-5">
           <SectionHeading
-            title="Current opportunity coverage"
-            description="A quick snapshot of the opportunities available to browse."
+            title={t("home.statsTitle")}
+            description={t("home.statsDescription")}
           />
           <h2 id="stats-heading" className="sr-only">
-            Demo statistics
+            {t("home.demoStats")}
           </h2>
           <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatItem label="Demo opportunities" value={stats.total} />
-            <StatItem label="Featured listings" value={stats.featured} />
-            <StatItem label="Remote work mode" value={stats.remote} />
-            <StatItem label="Countries and regions" value={stats.countries} />
+            <StatItem label={t("home.statDemo")} value={stats.total} locale={locale} />
+            <StatItem label={t("home.statFeatured")} value={stats.featured} locale={locale} />
+            <StatItem label={t("home.statRemote")} value={stats.remote} locale={locale} />
+            <StatItem label={t("home.statCountries")} value={stats.countries} locale={locale} />
           </dl>
         </section>
 
         <section aria-labelledby="featured-heading">
           <OpportunityList
             opportunities={featuredOpportunities}
-            heading="Featured opportunities"
-            countLabel={`Showing ${featuredOpportunities.length} featured listings`}
+            heading={t("home.featuredHeading")}
+            countLabel={t("home.featuredCount", {
+              count: formatLocalizedNumber(featuredOpportunities.length, locale),
+            })}
           />
         </section>
 
         <section aria-labelledby="categories-heading" className="space-y-5">
           <SectionHeading
-            title="Explore by category"
-            description="Jump directly into the type of opportunity that matches your goal."
+            title={t("home.categoriesTitle")}
+            description={t("home.categoriesDescription")}
           />
           <h2 id="categories-heading" className="sr-only">
-            Opportunity categories
+            {t("home.categoriesSr")}
           </h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {OPPORTUNITY_CATEGORIES.map((category) => (
@@ -171,10 +188,12 @@ export default async function Home() {
                 href={`/opportunities?category=${category.value}`}
                 className="group rounded-lg border border-border bg-card p-4 transition hover:border-action/50 hover:bg-surface"
               >
-                <span className="font-semibold text-primary">{category.label}</span>
+                <span className="font-semibold text-primary">
+                  {t(CATEGORY_MESSAGE_KEYS[category.value])}
+                </span>
                 <span className="mt-2 flex items-center gap-2 text-sm text-muted group-hover:text-action">
-                  View category
-                  <ArrowRight aria-hidden="true" className="size-4" />
+                  {t("home.viewCategory")}
+                  <ArrowRight aria-hidden="true" className="size-4 rtl-flip" />
                 </span>
               </Link>
             ))}
@@ -183,15 +202,17 @@ export default async function Home() {
 
         <section className="grid gap-6 lg:grid-cols-3">
           {howItWorksSteps.map((step, index) => (
-            <article key={step.title} className="rounded-lg border border-border bg-card p-5">
+            <article key={step.id} className="rounded-lg border border-border bg-card p-5">
               <p className="text-sm font-semibold text-accent">
-                Step {index + 1}
+                {t("home.step", {
+                  number: formatLocalizedNumber(index + 1, locale),
+                })}
               </p>
               <h2 className="mt-2 text-xl font-semibold text-primary">
-                {step.title}
+                {t(step.titleKey)}
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
-                {step.description}
+                {t(step.descriptionKey)}
               </p>
             </article>
           ))}
@@ -204,19 +225,16 @@ export default async function Home() {
                 <Globe2 aria-hidden="true" className="size-5" />
               </div>
               <h2 className="mt-4 text-2xl font-semibold text-primary">
-                Afghanistan-focused, online-aware, and internationally useful
+                {t("home.internationalTitle")}
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
-                Listings include Afghan locations, online opportunities, remote
-                work, and international programs available to Afghan applicants.
-                The goal is to support local discovery while acknowledging that
-                many opportunities now happen across borders.
+                {t("home.internationalDescription")}
               </p>
             </div>
             <dl className="grid gap-3 sm:grid-cols-3 lg:w-80 lg:grid-cols-1">
-              <StatItem label="Online listings" value={onlineCount} />
-              <StatItem label="Remote mode" value={stats.remote} />
-              <StatItem label="International listings" value={internationalCount} />
+              <StatItem label={t("home.onlineListings")} value={onlineCount} locale={locale} />
+              <StatItem label={t("home.remoteMode")} value={stats.remote} locale={locale} />
+              <StatItem label={t("home.internationalListings")} value={internationalCount} locale={locale} />
             </dl>
           </div>
         </section>
@@ -226,18 +244,17 @@ export default async function Home() {
             <div className="max-w-2xl">
               <div className="flex items-center gap-2 text-sm font-semibold text-accent">
                 <UsersRound aria-hidden="true" className="size-4" />
-                Project input
+                {t("home.projectInput")}
               </div>
               <h2 className="mt-3 text-2xl font-semibold text-primary">
-                Help shape KaarYab
+                {t("home.shapeTitle")}
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted">
-                Share feedback on the kinds of opportunities, categories, and
-                details that would make KaarYab more useful.
+                {t("home.shapeDescription")}
               </p>
             </div>
             <LinkButton href="/contact" variant="secondary">
-              Contact project team
+              {t("home.contactTeam")}
             </LinkButton>
           </div>
         </section>
@@ -246,11 +263,21 @@ export default async function Home() {
   );
 }
 
-function StatItem({ label, value }: { label: string; value: number }) {
+function StatItem({
+  label,
+  locale,
+  value,
+}: {
+  label: string;
+  locale: Locale;
+  value: number;
+}) {
   return (
     <div className="rounded-lg border border-border bg-card p-4">
       <dt className="text-sm font-medium text-muted">{label}</dt>
-      <dd className="mt-2 text-3xl font-semibold text-primary">{value}</dd>
+      <dd className="mt-2 text-3xl font-semibold text-primary">
+        {formatLocalizedNumber(value, locale)}
+      </dd>
     </div>
   );
 }
@@ -268,16 +295,19 @@ async function getHomeOpportunities() {
   }
 }
 
-function OpportunityDataErrorPage() {
+function OpportunityDataErrorPage({
+  description,
+  title,
+}: {
+  description: string;
+  title: string;
+}) {
   return (
     <PageContainer>
       <section className="rounded-lg border border-border bg-card px-5 py-10 text-center">
-        <h1 className="text-2xl font-semibold text-primary">
-          Opportunities are temporarily unavailable
-        </h1>
+        <h1 className="text-2xl font-semibold text-primary">{title}</h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
-          KaarYab could not load opportunity listings right now. Please try
-          again later.
+          {description}
         </p>
       </section>
     </PageContainer>

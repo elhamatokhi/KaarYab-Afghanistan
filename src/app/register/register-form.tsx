@@ -9,6 +9,8 @@ import {
   type RegisterInput,
 } from "@/features/auth/validation";
 import { zodToHookFormErrors } from "@/features/auth/auth-form-utils";
+import { useI18n } from "@/i18n/client";
+import { translateValidationMessage } from "@/i18n/validation";
 import { cn } from "@/lib/utils";
 
 const registerResolver: Resolver<RegisterInput> = async (values) => {
@@ -26,6 +28,7 @@ const registerResolver: Resolver<RegisterInput> = async (values) => {
 
 export function RegisterForm() {
   const router = useRouter();
+  const { t } = useI18n();
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -51,7 +54,7 @@ export function RegisterForm() {
     if (!response.ok) {
       setError("root", {
         type: "server",
-        message: "Registration could not be completed.",
+        message: t("auth.registrationFailed"),
       });
       return;
     }
@@ -75,7 +78,7 @@ export function RegisterForm() {
         </div>
       ) : null}
 
-      <FormField id="register-name" label="Name" error={errors.name?.message}>
+      <FormField id="register-name" label={t("common.name")} error={errors.name?.message}>
         <input
           id="register-name"
           type="text"
@@ -91,7 +94,7 @@ export function RegisterForm() {
         />
       </FormField>
 
-      <FormField id="register-email" label="Email" error={errors.email?.message}>
+      <FormField id="register-email" label={t("common.email")} error={errors.email?.message}>
         <input
           id="register-email"
           type="email"
@@ -109,7 +112,7 @@ export function RegisterForm() {
 
       <FormField
         id="register-password"
-        label="Password"
+        label={t("common.password")}
         error={errors.password?.message}
       >
         <input
@@ -129,9 +132,9 @@ export function RegisterForm() {
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted">
-          Already have an account?{" "}
+          {t("auth.haveAccount")}{" "}
           <Link href="/login" className="font-semibold text-action">
-            Login
+            {t("common.login")}
           </Link>
         </p>
         <button
@@ -139,7 +142,7 @@ export function RegisterForm() {
           disabled={isSubmitting}
           className="inline-flex min-h-11 items-center justify-center rounded-md bg-action px-5 py-2 text-sm font-semibold text-action-foreground transition hover:bg-action-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? "Creating account..." : "Create account"}
+          {isSubmitting ? t("auth.creatingAccount") : t("auth.createAccount")}
         </button>
       </div>
     </form>
@@ -161,15 +164,20 @@ function FormField({
   id: string;
   label: string;
 }) {
+  const { locale } = useI18n();
+  const translatedError = error
+    ? translateValidationMessage(error, locale)
+    : undefined;
+
   return (
     <div>
       <label htmlFor={id} className="text-sm font-semibold text-primary">
         {label}
       </label>
       <div className="mt-2">{children}</div>
-      {error ? (
+      {translatedError ? (
         <p id={`${id}-error`} role="alert" className="mt-2 text-sm text-danger">
-          {error}
+          {translatedError}
         </p>
       ) : null}
     </div>

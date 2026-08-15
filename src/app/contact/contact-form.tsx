@@ -4,6 +4,8 @@ import { useState } from "react";
 import type { FieldErrors, Resolver } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useI18n } from "@/i18n/client";
+import { translateValidationMessage } from "@/i18n/validation";
 import { cn } from "@/lib/utils";
 
 const contactFormSchema = z.object({
@@ -66,6 +68,7 @@ const contactFormResolver: Resolver<ContactFormValues> = async (values) => {
 };
 
 export function ContactForm() {
+  const { t } = useI18n();
   const [submissionState, setSubmissionState] =
     useState<SubmissionState>("idle");
   const {
@@ -105,11 +108,10 @@ export function ContactForm() {
     >
       <div>
         <h2 className="text-2xl font-semibold text-primary">
-          Send a message
+          {t("contact.formTitle")}
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted">
-          Share enough detail for the project team to understand your question
-          or suggestion.
+          {t("contact.formHelp")}
         </p>
       </div>
 
@@ -118,7 +120,7 @@ export function ContactForm() {
           role="status"
           className="rounded-md border border-success/30 bg-success-soft px-4 py-3 text-sm leading-6 text-success"
         >
-          Message checked successfully. No real message was sent.
+          {t("contact.success")}
         </div>
       ) : null}
 
@@ -127,14 +129,14 @@ export function ContactForm() {
           role="alert"
           className="rounded-md border border-danger/30 bg-danger-soft px-4 py-3 text-sm leading-6 text-danger"
         >
-          The form could not finish. Please try again.
+          {t("contact.error")}
         </div>
       ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
         <FormField
           id="contact-name"
-          label="Name"
+          label={t("common.name")}
           error={errors.name?.message}
         >
           <input
@@ -152,7 +154,7 @@ export function ContactForm() {
 
         <FormField
           id="contact-email"
-          label="Email"
+          label={t("common.email")}
           error={errors.email?.message}
         >
           <input
@@ -174,7 +176,7 @@ export function ContactForm() {
 
       <FormField
         id="contact-subject"
-        label="Subject"
+        label={t("common.subject")}
         error={errors.subject?.message}
       >
         <input
@@ -194,7 +196,7 @@ export function ContactForm() {
 
       <FormField
         id="contact-message"
-        label="Message"
+        label={t("common.message")}
         error={errors.message?.message}
       >
         <textarea
@@ -214,14 +216,14 @@ export function ContactForm() {
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-muted">
-          All fields are required.
+          {t("form.required")}
         </p>
         <button
           type="submit"
           disabled={isSubmitting}
           className="inline-flex min-h-11 items-center justify-center rounded-md bg-action px-5 py-2 text-sm font-semibold text-action-foreground transition hover:bg-action-hover disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? "Sending..." : "Send message"}
+          {isSubmitting ? t("contact.sending") : t("contact.send")}
         </button>
       </div>
     </form>
@@ -237,6 +239,10 @@ type FormFieldProps = {
 
 function FormField({ children, error, id, label }: FormFieldProps) {
   const errorId = `${id}-error`;
+  const { locale } = useI18n();
+  const translatedError = error
+    ? translateValidationMessage(error, locale)
+    : undefined;
 
   return (
     <div>
@@ -248,9 +254,9 @@ function FormField({ children, error, id, label }: FormFieldProps) {
         </span>
       </label>
       <div className="mt-2">{children}</div>
-      {error ? (
+      {translatedError ? (
         <p id={errorId} role="alert" className="mt-2 text-sm text-danger">
-          {error}
+          {translatedError}
         </p>
       ) : null}
     </div>

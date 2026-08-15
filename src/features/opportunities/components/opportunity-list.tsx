@@ -1,6 +1,9 @@
+"use client";
+
 import { Search } from "lucide-react";
 import { OpportunityCard } from "@/features/opportunities/components/opportunity-card";
 import type { Opportunity } from "@/features/opportunities/types";
+import { useI18n } from "@/i18n/client";
 
 type OpportunityListProps = {
   opportunities: Opportunity[];
@@ -12,23 +15,25 @@ type OpportunityListProps = {
 
 export function OpportunityList({
   opportunities,
-  heading = "Demo opportunities",
+  heading,
   countLabel,
-  emptyTitle = "No opportunities found",
-  emptyDescription = "There are no opportunities to show yet.",
+  emptyTitle,
+  emptyDescription,
 }: OpportunityListProps) {
+  const { formatNumber, t } = useI18n();
+
   if (opportunities.length === 0) {
     return (
       <section
-        aria-label="Opportunity results"
+        aria-label={t("list.aria")}
         className="rounded-lg border border-border bg-card px-5 py-10 text-center"
       >
         <Search aria-hidden="true" className="mx-auto size-8 text-muted" />
         <h2 className="mt-4 text-xl font-semibold text-primary">
-          {emptyTitle}
+          {emptyTitle ?? t("list.emptyTitle")}
         </h2>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
-          {emptyDescription}
+          {emptyDescription ?? t("list.emptyDescription")}
         </p>
       </section>
     );
@@ -41,10 +46,11 @@ export function OpportunityList({
           id="opportunity-results-heading"
           className="text-2xl font-semibold text-primary"
         >
-          {heading}
+          {heading ?? t("list.defaultHeading")}
         </h2>
         <p className="text-sm text-muted">
-          {countLabel ?? `Showing ${opportunities.length} listings`}
+          {countLabel ??
+            t("list.showing", { count: formatNumber(opportunities.length) })}
         </p>
       </div>
       <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3">

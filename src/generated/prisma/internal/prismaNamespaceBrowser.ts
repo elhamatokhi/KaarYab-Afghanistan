@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Opportunity: 'Opportunity',
+  OpportunityTranslation: 'OpportunityTranslation',
   User: 'User',
   SavedOpportunity: 'SavedOpportunity',
   Account: 'Account',
@@ -95,6 +96,24 @@ export const OpportunityScalarFieldEnum = {
 } as const
 
 export type OpportunityScalarFieldEnum = (typeof OpportunityScalarFieldEnum)[keyof typeof OpportunityScalarFieldEnum]
+
+
+export const OpportunityTranslationScalarFieldEnum = {
+  id: 'id',
+  opportunityId: 'opportunityId',
+  locale: 'locale',
+  title: 'title',
+  organization: 'organization',
+  location: 'location',
+  country: 'country',
+  description: 'description',
+  requirements: 'requirements',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OpportunityTranslationScalarFieldEnum = (typeof OpportunityTranslationScalarFieldEnum)[keyof typeof OpportunityTranslationScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {

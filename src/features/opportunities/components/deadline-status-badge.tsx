@@ -1,11 +1,13 @@
+"use client";
+
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui";
 import type { Opportunity } from "@/features/opportunities/types";
 import {
-  formatOpportunityDate,
   getDaysUntilDeadline,
   getOpportunityDeadlineStatus,
 } from "@/features/opportunities/utils";
+import { useI18n } from "@/i18n/client";
 
 type DeadlineStatusBadgeProps = {
   opportunity: Opportunity;
@@ -16,10 +18,16 @@ export function DeadlineStatusBadge({
   opportunity,
   referenceDate = new Date(),
 }: DeadlineStatusBadgeProps) {
+  const { formatDate, formatNumber, t } = useI18n();
   const deadlineStatus = getOpportunityDeadlineStatus(opportunity, referenceDate);
   const daysUntilDeadline = getDaysUntilDeadline(opportunity, referenceDate);
-  const formattedDeadline = formatOpportunityDate(opportunity.deadline);
-  const statusDetails = getStatusDetails(deadlineStatus, daysUntilDeadline);
+  const formattedDeadline = formatDate(opportunity.deadline);
+  const statusDetails = getStatusDetails(
+    deadlineStatus,
+    daysUntilDeadline,
+    t,
+    formatNumber,
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
@@ -30,7 +38,7 @@ export function DeadlineStatusBadge({
         </span>
       </Badge>
       <span>
-        Deadline:{" "}
+        {t("deadline.label")}{" "}
         <time dateTime={opportunity.deadline} className="font-medium text-primary">
           {formattedDeadline}
         </time>
@@ -42,10 +50,12 @@ export function DeadlineStatusBadge({
 function getStatusDetails(
   deadlineStatus: ReturnType<typeof getOpportunityDeadlineStatus>,
   daysUntilDeadline: number,
+  t: ReturnType<typeof useI18n>["t"],
+  formatNumber: (value: number) => string,
 ) {
   if (deadlineStatus === "expired") {
     return {
-      label: "Expired",
+      label: t("deadline.expired"),
       tone: "danger" as const,
     };
   }
@@ -54,14 +64,16 @@ function getStatusDetails(
     return {
       label:
         daysUntilDeadline === 0
-          ? "Expiring today"
-          : `Expiring soon: ${daysUntilDeadline} days left`,
+          ? t("deadline.expiringToday")
+          : t("deadline.expiringSoon", {
+              days: formatNumber(daysUntilDeadline),
+            }),
       tone: "warning" as const,
     };
   }
 
   return {
-    label: "Active",
+    label: t("common.active"),
     tone: "success" as const,
   };
 }

@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Opportunity: 'Opportunity',
+  OpportunityTranslation: 'OpportunityTranslation',
   User: 'User',
   SavedOpportunity: 'SavedOpportunity',
   Account: 'Account',
@@ -418,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "opportunity" | "user" | "savedOpportunity" | "account" | "session" | "verificationToken"
+    modelProps: "opportunity" | "opportunityTranslation" | "user" | "savedOpportunity" | "account" | "session" | "verificationToken"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -493,6 +494,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.OpportunityCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.OpportunityCountAggregateOutputType> | number
+        }
+      }
+    }
+    OpportunityTranslation: {
+      payload: Prisma.$OpportunityTranslationPayload<ExtArgs>
+      fields: Prisma.OpportunityTranslationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OpportunityTranslationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OpportunityTranslationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>
+        }
+        findFirst: {
+          args: Prisma.OpportunityTranslationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OpportunityTranslationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>
+        }
+        findMany: {
+          args: Prisma.OpportunityTranslationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>[]
+        }
+        create: {
+          args: Prisma.OpportunityTranslationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>
+        }
+        createMany: {
+          args: Prisma.OpportunityTranslationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OpportunityTranslationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>[]
+        }
+        delete: {
+          args: Prisma.OpportunityTranslationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>
+        }
+        update: {
+          args: Prisma.OpportunityTranslationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>
+        }
+        deleteMany: {
+          args: Prisma.OpportunityTranslationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OpportunityTranslationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OpportunityTranslationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>[]
+        }
+        upsert: {
+          args: Prisma.OpportunityTranslationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpportunityTranslationPayload>
+        }
+        aggregate: {
+          args: Prisma.OpportunityTranslationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOpportunityTranslation>
+        }
+        groupBy: {
+          args: Prisma.OpportunityTranslationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpportunityTranslationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OpportunityTranslationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpportunityTranslationCountAggregateOutputType> | number
         }
       }
     }
@@ -927,6 +1002,24 @@ export const OpportunityScalarFieldEnum = {
 export type OpportunityScalarFieldEnum = (typeof OpportunityScalarFieldEnum)[keyof typeof OpportunityScalarFieldEnum]
 
 
+export const OpportunityTranslationScalarFieldEnum = {
+  id: 'id',
+  opportunityId: 'opportunityId',
+  locale: 'locale',
+  title: 'title',
+  organization: 'organization',
+  location: 'location',
+  country: 'country',
+  description: 'description',
+  requirements: 'requirements',
+  tags: 'tags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OpportunityTranslationScalarFieldEnum = (typeof OpportunityTranslationScalarFieldEnum)[keyof typeof OpportunityTranslationScalarFieldEnum]
+
+
 export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1262,6 +1355,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   opportunity?: Prisma.OpportunityOmit
+  opportunityTranslation?: Prisma.OpportunityTranslationOmit
   user?: Prisma.UserOmit
   savedOpportunity?: Prisma.SavedOpportunityOmit
   account?: Prisma.AccountOmit
