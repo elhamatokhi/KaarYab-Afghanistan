@@ -2,16 +2,10 @@ import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui";
 import type { Opportunity } from "@/features/opportunities/types";
 import {
+  formatOpportunityDate,
   getDaysUntilDeadline,
   getOpportunityDeadlineStatus,
 } from "@/features/opportunities/utils";
-
-const dateFormatter = new Intl.DateTimeFormat("en", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-});
 
 type DeadlineStatusBadgeProps = {
   opportunity: Opportunity;
@@ -24,7 +18,7 @@ export function DeadlineStatusBadge({
 }: DeadlineStatusBadgeProps) {
   const deadlineStatus = getOpportunityDeadlineStatus(opportunity, referenceDate);
   const daysUntilDeadline = getDaysUntilDeadline(opportunity, referenceDate);
-  const formattedDeadline = dateFormatter.format(new Date(opportunity.deadline));
+  const formattedDeadline = formatOpportunityDate(opportunity.deadline);
   const statusDetails = getStatusDetails(deadlineStatus, daysUntilDeadline);
 
   return (

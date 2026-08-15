@@ -190,6 +190,32 @@ export function sortOpportunities(
   });
 }
 
+export function getRelatedOpportunities(
+  opportunities: Opportunity[],
+  currentOpportunity: Opportunity,
+  limit = 3,
+): Opportunity[] {
+  return opportunities
+    .filter((opportunity) => opportunity.id !== currentOpportunity.id)
+    .map((opportunity) => ({
+      opportunity,
+      score: getRelatedOpportunityScore(opportunity, currentOpportunity),
+    }))
+    .filter((result) => result.score > 0)
+    .sort((firstResult, secondResult) => {
+      if (secondResult.score !== firstResult.score) {
+        return secondResult.score - firstResult.score;
+      }
+
+      return (
+        parseIsoDate(secondResult.opportunity.createdAt).getTime() -
+        parseIsoDate(firstResult.opportunity.createdAt).getTime()
+      );
+    })
+    .slice(0, limit)
+    .map((result) => result.opportunity);
+}
+
 export function calculateDashboardStats(
   opportunities: Opportunity[],
   referenceDate = new Date(),
@@ -244,8 +270,42 @@ export function getOpportunityDeadlineStatus(
   return "active";
 }
 
+export function formatOpportunityDate(
+  value: Opportunity["deadline"] | Opportunity["createdAt"],
+) {
+  return new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(parseIsoDate(value));
+}
+
+export function isDemoApplyLink(applyLink: Opportunity["applyLink"]) {
+  try {
+    return new URL(applyLink).hostname.endsWith(".test");
+  } catch {
+    return false;
+  }
+}
+
 function normalizeSearchValue(value = "") {
   return value.trim().toLowerCase();
+}
+
+function getRelatedOpportunityScore(
+  opportunity: Opportunity,
+  currentOpportunity: Opportunity,
+) {
+  const sharedTagCount = opportunity.tags.filter((tag) =>
+    currentOpportunity.tags.includes(tag),
+  ).length;
+
+  return (
+    (opportunity.category === currentOpportunity.category ? 3 : 0) +
+    (opportunity.workMode === currentOpportunity.workMode ? 1 : 0) +
+    sharedTagCount
+  );
 }
 
 function parseIsoDate(value: Opportunity["deadline"] | Opportunity["createdAt"]) {

@@ -8,8 +8,11 @@ import {
   filterOpportunities,
   filterOpportunitiesBySearchQuery,
   findOpportunityById,
+  formatOpportunityDate,
   getDaysUntilDeadline,
   getFeaturedOpportunities,
+  getRelatedOpportunities,
+  isDemoApplyLink,
   isOpportunityExpired,
   isOpportunityExpiringSoon,
   sortOpportunities,
@@ -145,5 +148,33 @@ describe("opportunity utilities", () => {
         count: 2,
       },
     ]);
+  });
+
+  it("selects related opportunities deterministically", () => {
+    const currentOpportunity = findOpportunityById(
+      demoOpportunities,
+      "opp-youth-digital-skills-fellowship",
+    );
+
+    expect(currentOpportunity).toBeDefined();
+    expect(
+      getRelatedOpportunities(demoOpportunities, currentOpportunity!).map(
+        (opportunity) => opportunity.id,
+      ),
+    ).toEqual([
+      "opp-agriculture-innovation-trainee",
+      "opp-regional-peacebuilding-workshop",
+      "opp-junior-communications-officer",
+    ]);
+  });
+
+  it("formats opportunity dates in UTC", () => {
+    expect(formatOpportunityDate("2026-08-22T23:59:00Z")).toBe("Aug 22, 2026");
+  });
+
+  it("detects reserved demo apply links", () => {
+    expect(isDemoApplyLink("https://example.test/apply/demo")).toBe(true);
+    expect(isDemoApplyLink("https://apply.example.org/listing")).toBe(false);
+    expect(isDemoApplyLink("not a url")).toBe(false);
   });
 });

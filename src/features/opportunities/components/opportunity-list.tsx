@@ -4,9 +4,15 @@ import type { Opportunity } from "@/features/opportunities/types";
 
 type OpportunityListProps = {
   opportunities: Opportunity[];
+  heading?: string;
+  countLabel?: string;
 };
 
-export function OpportunityList({ opportunities }: OpportunityListProps) {
+export function OpportunityList({
+  opportunities,
+  heading = "Demo opportunities",
+  countLabel,
+}: OpportunityListProps) {
   if (opportunities.length === 0) {
     return (
       <section
@@ -32,10 +38,10 @@ export function OpportunityList({ opportunities }: OpportunityListProps) {
           id="opportunity-results-heading"
           className="text-2xl font-semibold text-primary"
         >
-          Demo opportunities
+          {heading}
         </h2>
         <p className="text-sm text-muted">
-          Showing {opportunities.length} fictional listings
+          {countLabel ?? `Showing ${opportunities.length} fictional listings`}
         </p>
       </div>
       <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3">
