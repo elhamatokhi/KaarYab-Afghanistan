@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum WorkMode {
+  REMOTE
+  ONSITE
+  HYBRID
+}
+
+model Opportunity {
+  id             String   @id @default(cuid())
+  title          String
+  organization   String
+  category       String
+  location       String
+  country        String
+  workMode       WorkMode
+  employmentType String
+  deadline       DateTime
+  description    String
+  requirements   String[]
+  applyLink      String
+  tags           String[]
+  featured       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([category])
+  @@index([country])
+  @@index([workMode])
+  @@index([deadline])
+}
