@@ -1,8 +1,8 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-import { useMemo, type ReactNode } from "react";
-import { demoOpportunities } from "@/features/opportunities/demo-data";
+import { SessionProvider } from "next-auth/react";
+import type { ReactNode } from "react";
 import { SavedOpportunitiesReduxProvider } from "@/features/saved/saved-opportunities-provider";
 
 type ProvidersProps = {
@@ -10,16 +10,13 @@ type ProvidersProps = {
 };
 
 export function Providers({ children }: ProvidersProps) {
-  const validOpportunityIds = useMemo(
-    () => demoOpportunities.map((opportunity) => opportunity.id),
-    [],
-  );
-
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <SavedOpportunitiesReduxProvider validOpportunityIds={validOpportunityIds}>
-        {children}
-      </SavedOpportunitiesReduxProvider>
-    </ThemeProvider>
+    <SessionProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <SavedOpportunitiesReduxProvider>
+          {children}
+        </SavedOpportunitiesReduxProvider>
+      </ThemeProvider>
+    </SessionProvider>
   );
 }

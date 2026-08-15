@@ -1,67 +1,87 @@
 "use client";
 
 import { Provider } from "react-redux";
+import { useSession } from "next-auth/react";
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  hydrateSavedOpportunities,
-  parsePersistedSavedOpportunityIds,
-  SAVED_OPPORTUNITIES_STORAGE_KEY,
-  selectSavedOpportunitiesHydrated,
-  selectSavedOpportunityIds,
+  beginSavedOpportunitiesLoad,
+  clearSavedOpportunities,
+  markSavedOpportunitiesError,
+  setSavedOpportunities,
 } from "@/features/saved/saved-opportunities-slice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { makeStore } from "@/store/store";
 
 type SavedOpportunitiesReduxProviderProps = {
   children: ReactNode;
-  validOpportunityIds: string[];
 };
 
 export function SavedOpportunitiesReduxProvider({
   children,
-  validOpportunityIds,
 }: SavedOpportunitiesReduxProviderProps) {
   const [store] = useState(makeStore);
 
   return (
     <Provider store={store}>
-      <SavedOpportunitiesStorageBridge validOpportunityIds={validOpportunityIds}>
-        {children}
-      </SavedOpportunitiesStorageBridge>
+      <SavedOpportunitiesSessionBridge>{children}</SavedOpportunitiesSessionBridge>
     </Provider>
   );
 }
 
-function SavedOpportunitiesStorageBridge({
-  children,
-  validOpportunityIds,
-}: SavedOpportunitiesReduxProviderProps) {
+function SavedOpportunitiesSessionBridge({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
-  const hydrated = useAppSelector(selectSavedOpportunitiesHydrated);
-  const savedOpportunityIds = useAppSelector(selectSavedOpportunityIds);
+  const { data: session, status } = useSession();
+  const userId = session?.user?.id;
+  const userRole = session?.user?.role;
+  const canUseSavedOpportunities = status === "authenticated" && userRole === "USER";
 
   useEffect(() => {
-    const storedValue = window.localStorage.getItem(
-      SAVED_OPPORTUNITIES_STORAGE_KEY,
-    );
-    const parsedIds = parsePersistedSavedOpportunityIds(
-      storedValue,
-      validOpportunityIds,
-    );
-
-    dispatch(hydrateSavedOpportunities(parsedIds));
-  }, [dispatch, validOpportunityIds]);
-
-  useEffect(() => {
-    if (!hydrated) {
+    if (!canUseSavedOpportunities || !userId) {
+      dispatch(clearSavedOpportunities());
       return;
     }
 
-    window.localStorage.setItem(
-      SAVED_OPPORTUNITIES_STORAGE_KEY,
-      JSON.stringify(savedOpportunityIds),
-    );
-  }, [hydrated, savedOpportunityIds]);
+    const accountKey = userId;
+    const abortController = new AbortController();
+    dispatch(beginSavedOpportunitiesLoad({ accountKey }));
+
+    async function loadSavedOpportunities() {
+      try {
+        const response = await fetch("/api/saved", {
+          cache: "no-store",
+          signal: abortController.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Unable to load saved opportunities.");
+        }
+
+        const payload = (await response.json()) as {
+          data?: { savedOpportunityIds?: unknown };
+        };
+        const ids = Array.isArray(payload.data?.savedOpportunityIds)
+          ? payload.data.savedOpportunityIds.filter(
+              (id): id is string => typeof id === "string",
+            )
+          : [];
+
+        dispatch(setSavedOpportunities({ ids, accountKey }));
+      } catch {
+        if (abortController.signal.aborted) {
+          return;
+        }
+
+        console.error("Saved opportunities sync failed.");
+        dispatch(markSavedOpportunitiesError());
+      }
+    }
+
+    void loadSavedOpportunities();
+
+    return () => {
+      abortController.abort();
+    };
+  }, [canUseSavedOpportunities, dispatch, userId]);
 
   return children;
 }

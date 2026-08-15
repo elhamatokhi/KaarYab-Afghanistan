@@ -116,7 +116,7 @@ export function isOpportunityDataAccessError(error: unknown) {
   return error instanceof OpportunityDataAccessError;
 }
 
-function mapPrismaOpportunityToOpportunity(
+export function mapPrismaOpportunityToOpportunity(
   opportunity: PrismaOpportunity,
 ): Opportunity {
   return {

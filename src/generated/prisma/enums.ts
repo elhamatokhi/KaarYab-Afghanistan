@@ -16,3 +16,11 @@ export const WorkMode = {
 } as const
 
 export type WorkMode = (typeof WorkMode)[keyof typeof WorkMode]
+
+
+export const UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]

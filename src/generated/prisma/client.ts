@@ -46,3 +46,28 @@ export { Prisma }
  * 
  */
 export type Opportunity = Prisma.OpportunityModel
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
+ * Model SavedOpportunity
+ * 
+ */
+export type SavedOpportunity = Prisma.SavedOpportunityModel
+/**
+ * Model Account
+ * 
+ */
+export type Account = Prisma.AccountModel
+/**
+ * Model Session
+ * 
+ */
+export type Session = Prisma.SessionModel
+/**
+ * Model VerificationToken
+ * 
+ */
+export type VerificationToken = Prisma.VerificationTokenModel

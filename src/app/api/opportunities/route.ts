@@ -3,6 +3,7 @@ import {
   createOpportunity,
   getAllOpportunities,
 } from "@/features/opportunities/data";
+import { requireAdminMutation } from "@/features/auth/authorization";
 import {
   jsonBadRequest,
   jsonCreated,
@@ -22,9 +23,13 @@ export async function GET() {
   }
 }
 
-// Capstone MVP note: mutation endpoints are intentionally unprotected until
-// authentication and authorization are added in a later phase.
 export async function POST(request: Request) {
+  const authorizationError = await requireAdminMutation();
+
+  if (authorizationError) {
+    return authorizationError;
+  }
+
   const body = await parseJsonRequest(request);
 
   if (!body) {

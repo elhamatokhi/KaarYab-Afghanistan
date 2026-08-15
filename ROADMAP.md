@@ -12,16 +12,18 @@
 - Complete Home and About pages using existing demo data, constants, cards, and utilities.
 - Complete Contact page with a local React Hook Form and Zod validation experience.
 - URL-based opportunity search, filtering, sorting, result counts, and no-results states.
-- Redux Toolkit saved-opportunities state with localStorage persistence, save buttons, and a complete Saved page.
+- Redux Toolkit saved-opportunities UI state with authenticated PostgreSQL-backed saves and a complete Saved page for USER accounts.
 - Neon PostgreSQL migration and seed with Prisma-backed reads for Home, Opportunities, and Opportunity Details.
 - Prisma-backed CRUD Route Handlers for opportunities with shared Zod validation. Mutation endpoints are unprotected until authentication is added in a later phase.
 - Shared React Hook Form opportunity form connected to Add and Edit pages through the existing CRUD API.
 - Prisma-backed dashboard with opportunity statistics, category distribution, upcoming deadlines, and delete management.
+- Auth.js credentials authentication with Prisma-backed users, role-based authorization, and admin-only opportunity management.
+- Role-specific navigation and controls for anonymous visitors, USER accounts, and ADMIN accounts.
 
 ## Remaining Implementation Order
 
 1. Add route loading, empty, error, and not-found states where still missing.
-2. Add focused tests for dashboard interactions, form flows, and CRUD boundaries.
+2. Add focused browser-level tests for authenticated form flows, saved-opportunity flows, and dashboard interactions.
 3. Complete README deployment notes and deploy to Vercel with production environment variables.
 
 ## Continuous Requirements

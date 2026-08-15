@@ -20,7 +20,7 @@ const principles = [
 const futureVision = [
   "Database-backed opportunity browsing and detail pages.",
   "URL-based search, filters, and sorting.",
-  "Saved opportunities with persistent client state.",
+  "Account-based saved opportunities for authenticated users.",
   "Validated create and edit workflows for opportunity records.",
   "Dashboard statistics for reviewing opportunity coverage.",
 ];
@@ -146,9 +146,6 @@ export default function AboutPage() {
             <LinkButton href="/opportunities">View opportunities</LinkButton>
             <LinkButton href="/contact" variant="secondary">
               Contact
-            </LinkButton>
-            <LinkButton href="/add-opportunity" variant="secondary">
-              Add opportunity
             </LinkButton>
           </div>
         </section>

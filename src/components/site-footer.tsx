@@ -7,15 +7,12 @@ const footerSections = [
     links: [
       { href: "/", label: "Home" },
       { href: "/opportunities", label: "Opportunities" },
-      { href: "/saved", label: "Saved" },
-      { href: "/dashboard", label: "Dashboard" },
     ],
   },
   {
     title: "Opportunities",
     links: [
       { href: "/opportunities", label: "Browse opportunities" },
-      { href: "/add-opportunity", label: "Add opportunity" },
     ],
   },
   {

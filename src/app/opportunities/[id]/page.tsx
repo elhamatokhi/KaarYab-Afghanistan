@@ -14,6 +14,7 @@ import {
   Star,
 } from "lucide-react";
 import { Badge, PageContainer } from "@/components/ui";
+import { getCurrentUserRole, isAdminRole } from "@/features/auth/authorization";
 import {
   CATEGORY_LABELS,
   EMPLOYMENT_TYPE_LABELS,
@@ -78,6 +79,8 @@ export default async function OpportunityDetailPage({
     opportunity,
   );
   const isExpired = getOpportunityDeadlineStatus(opportunity) === "expired";
+  const userRole = await getCurrentUserRole();
+  const canManageOpportunities = isAdminRole(userRole);
 
   return (
     <PageContainer>
@@ -195,43 +198,47 @@ export default async function OpportunityDetailPage({
           </article>
 
           <aside className="space-y-4 lg:sticky lg:top-24">
-            <section
-              aria-labelledby="save-opportunity-heading"
-              className="rounded-lg border border-border bg-card p-5"
-            >
-              <h2
-                id="save-opportunity-heading"
-                className="text-xl font-semibold text-primary"
+            {!canManageOpportunities ? (
+              <section
+                aria-labelledby="save-opportunity-heading"
+                className="rounded-lg border border-border bg-card p-5"
               >
-                Bookmark
-              </h2>
-              <div className="mt-4">
-                <SaveOpportunityButton
-                  opportunityId={opportunity.id}
-                  opportunityTitle={opportunity.title}
-                  variant="full"
-                />
-              </div>
-            </section>
+                <h2
+                  id="save-opportunity-heading"
+                  className="text-xl font-semibold text-primary"
+                >
+                  Bookmark
+                </h2>
+                <div className="mt-4">
+                  <SaveOpportunityButton
+                    opportunityId={opportunity.id}
+                    opportunityTitle={opportunity.title}
+                    variant="full"
+                  />
+                </div>
+              </section>
+            ) : null}
 
-            <section
-              aria-labelledby="manage-opportunity-heading"
-              className="rounded-lg border border-border bg-card p-5"
-            >
-              <h2
-                id="manage-opportunity-heading"
-                className="text-xl font-semibold text-primary"
+            {canManageOpportunities ? (
+              <section
+                aria-labelledby="manage-opportunity-heading"
+                className="rounded-lg border border-border bg-card p-5"
               >
-                Manage
-              </h2>
-              <Link
-                href={`/opportunities/${opportunity.id}/edit`}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
-              >
-                <Pencil aria-hidden="true" className="size-4" />
-                Edit opportunity
-              </Link>
-            </section>
+                <h2
+                  id="manage-opportunity-heading"
+                  className="text-xl font-semibold text-primary"
+                >
+                  Manage
+                </h2>
+                <Link
+                  href={`/opportunities/${opportunity.id}/edit`}
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
+                >
+                  <Pencil aria-hidden="true" className="size-4" />
+                  Edit opportunity
+                </Link>
+              </section>
+            ) : null}
 
             <section
               aria-labelledby="application-heading"

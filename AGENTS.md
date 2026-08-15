@@ -33,7 +33,8 @@ clear, conventional, and easy to explain.
 - Import the generated Prisma client from `src/generated/prisma/client`.
 - Keep UI components in `src/components`.
 - Keep React context providers in `src/context`.
-- Saved opportunities use browser `localStorage`; do not add authentication in the first MVP.
+- Saved opportunities are owned PostgreSQL records for authenticated USER
+  accounts. Do not store saved opportunity ownership in browser `localStorage`.
 
 ## Verification
 

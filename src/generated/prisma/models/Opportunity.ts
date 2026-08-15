@@ -262,6 +262,7 @@ export type OpportunityWhereInput = {
   featured?: Prisma.BoolFilter<"Opportunity"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
+  savedBy?: Prisma.SavedOpportunityListRelationFilter
 }
 
 export type OpportunityOrderByWithRelationInput = {
@@ -281,6 +282,7 @@ export type OpportunityOrderByWithRelationInput = {
   featured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  savedBy?: Prisma.SavedOpportunityOrderByRelationAggregateInput
 }
 
 export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
@@ -303,6 +305,7 @@ export type OpportunityWhereUniqueInput = Prisma.AtLeast<{
   featured?: Prisma.BoolFilter<"Opportunity"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Opportunity"> | Date | string
+  savedBy?: Prisma.SavedOpportunityListRelationFilter
 }, "id">
 
 export type OpportunityOrderByWithAggregationInput = {
@@ -366,6 +369,7 @@ export type OpportunityCreateInput = {
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  savedBy?: Prisma.SavedOpportunityCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUncheckedCreateInput = {
@@ -385,6 +389,7 @@ export type OpportunityUncheckedCreateInput = {
   featured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  savedBy?: Prisma.SavedOpportunityUncheckedCreateNestedManyWithoutOpportunityInput
 }
 
 export type OpportunityUpdateInput = {
@@ -404,6 +409,7 @@ export type OpportunityUpdateInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  savedBy?: Prisma.SavedOpportunityUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityUncheckedUpdateInput = {
@@ -423,6 +429,7 @@ export type OpportunityUncheckedUpdateInput = {
   featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  savedBy?: Prisma.SavedOpportunityUncheckedUpdateManyWithoutOpportunityNestedInput
 }
 
 export type OpportunityCreateManyInput = {
@@ -543,6 +550,11 @@ export type OpportunityMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type OpportunityScalarRelationFilter = {
+  is?: Prisma.OpportunityWhereInput
+  isNot?: Prisma.OpportunityWhereInput
+}
+
 export type OpportunityCreaterequirementsInput = {
   set: string[]
 }
@@ -577,6 +589,141 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type OpportunityCreateNestedOneWithoutSavedByInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutSavedByInput, Prisma.OpportunityUncheckedCreateWithoutSavedByInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutSavedByInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+}
+
+export type OpportunityUpdateOneRequiredWithoutSavedByNestedInput = {
+  create?: Prisma.XOR<Prisma.OpportunityCreateWithoutSavedByInput, Prisma.OpportunityUncheckedCreateWithoutSavedByInput>
+  connectOrCreate?: Prisma.OpportunityCreateOrConnectWithoutSavedByInput
+  upsert?: Prisma.OpportunityUpsertWithoutSavedByInput
+  connect?: Prisma.OpportunityWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OpportunityUpdateToOneWithWhereWithoutSavedByInput, Prisma.OpportunityUpdateWithoutSavedByInput>, Prisma.OpportunityUncheckedUpdateWithoutSavedByInput>
+}
+
+export type OpportunityCreateWithoutSavedByInput = {
+  id?: string
+  title: string
+  organization: string
+  category: string
+  location: string
+  country: string
+  workMode: $Enums.WorkMode
+  employmentType: string
+  deadline: Date | string
+  description: string
+  requirements?: Prisma.OpportunityCreaterequirementsInput | string[]
+  applyLink: string
+  tags?: Prisma.OpportunityCreatetagsInput | string[]
+  featured?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OpportunityUncheckedCreateWithoutSavedByInput = {
+  id?: string
+  title: string
+  organization: string
+  category: string
+  location: string
+  country: string
+  workMode: $Enums.WorkMode
+  employmentType: string
+  deadline: Date | string
+  description: string
+  requirements?: Prisma.OpportunityCreaterequirementsInput | string[]
+  applyLink: string
+  tags?: Prisma.OpportunityCreatetagsInput | string[]
+  featured?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type OpportunityCreateOrConnectWithoutSavedByInput = {
+  where: Prisma.OpportunityWhereUniqueInput
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutSavedByInput, Prisma.OpportunityUncheckedCreateWithoutSavedByInput>
+}
+
+export type OpportunityUpsertWithoutSavedByInput = {
+  update: Prisma.XOR<Prisma.OpportunityUpdateWithoutSavedByInput, Prisma.OpportunityUncheckedUpdateWithoutSavedByInput>
+  create: Prisma.XOR<Prisma.OpportunityCreateWithoutSavedByInput, Prisma.OpportunityUncheckedCreateWithoutSavedByInput>
+  where?: Prisma.OpportunityWhereInput
+}
+
+export type OpportunityUpdateToOneWithWhereWithoutSavedByInput = {
+  where?: Prisma.OpportunityWhereInput
+  data: Prisma.XOR<Prisma.OpportunityUpdateWithoutSavedByInput, Prisma.OpportunityUncheckedUpdateWithoutSavedByInput>
+}
+
+export type OpportunityUpdateWithoutSavedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  organization?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  workMode?: Prisma.EnumWorkModeFieldUpdateOperationsInput | $Enums.WorkMode
+  employmentType?: Prisma.StringFieldUpdateOperationsInput | string
+  deadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  requirements?: Prisma.OpportunityUpdaterequirementsInput | string[]
+  applyLink?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.OpportunityUpdatetagsInput | string[]
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OpportunityUncheckedUpdateWithoutSavedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  organization?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.StringFieldUpdateOperationsInput | string
+  country?: Prisma.StringFieldUpdateOperationsInput | string
+  workMode?: Prisma.EnumWorkModeFieldUpdateOperationsInput | $Enums.WorkMode
+  employmentType?: Prisma.StringFieldUpdateOperationsInput | string
+  deadline?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  requirements?: Prisma.OpportunityUpdaterequirementsInput | string[]
+  applyLink?: Prisma.StringFieldUpdateOperationsInput | string
+  tags?: Prisma.OpportunityUpdatetagsInput | string[]
+  featured?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type OpportunityCountOutputType
+ */
+
+export type OpportunityCountOutputType = {
+  savedBy: number
+}
+
+export type OpportunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  savedBy?: boolean | OpportunityCountOutputTypeCountSavedByArgs
+}
+
+/**
+ * OpportunityCountOutputType without action
+ */
+export type OpportunityCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OpportunityCountOutputType
+   */
+  select?: Prisma.OpportunityCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * OpportunityCountOutputType without action
+ */
+export type OpportunityCountOutputTypeCountSavedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SavedOpportunityWhereInput
+}
 
 
 export type OpportunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -596,6 +743,8 @@ export type OpportunitySelect<ExtArgs extends runtime.Types.Extensions.InternalA
   featured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  savedBy?: boolean | Prisma.Opportunity$savedByArgs<ExtArgs>
+  _count?: boolean | Prisma.OpportunityCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["opportunity"]>
 
 export type OpportunitySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -656,10 +805,18 @@ export type OpportunitySelectScalar = {
 }
 
 export type OpportunityOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "organization" | "category" | "location" | "country" | "workMode" | "employmentType" | "deadline" | "description" | "requirements" | "applyLink" | "tags" | "featured" | "createdAt" | "updatedAt", ExtArgs["result"]["opportunity"]>
+export type OpportunityInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  savedBy?: boolean | Prisma.Opportunity$savedByArgs<ExtArgs>
+  _count?: boolean | Prisma.OpportunityCountOutputTypeDefaultArgs<ExtArgs>
+}
+export type OpportunityIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type OpportunityIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $OpportunityPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Opportunity"
-  objects: {}
+  objects: {
+    savedBy: Prisma.$SavedOpportunityPayload<ExtArgs>[]
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     title: string
@@ -1071,6 +1228,7 @@ readonly fields: OpportunityFieldRefs;
  */
 export interface Prisma__OpportunityClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  savedBy<T extends Prisma.Opportunity$savedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Opportunity$savedByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SavedOpportunityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1133,6 +1291,10 @@ export type OpportunityFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
+  /**
    * Filter, which Opportunity to fetch.
    */
   where: Prisma.OpportunityWhereUniqueInput
@@ -1151,6 +1313,10 @@ export type OpportunityFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
+  /**
    * Filter, which Opportunity to fetch.
    */
   where: Prisma.OpportunityWhereUniqueInput
@@ -1168,6 +1334,10 @@ export type OpportunityFindFirstArgs<ExtArgs extends runtime.Types.Extensions.In
    * Omit specific fields from the Opportunity
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
   /**
    * Filter, which Opportunity to fetch.
    */
@@ -1217,6 +1387,10 @@ export type OpportunityFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extens
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
+  /**
    * Filter, which Opportunity to fetch.
    */
   where?: Prisma.OpportunityWhereInput
@@ -1264,6 +1438,10 @@ export type OpportunityFindManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the Opportunity
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
   /**
    * Filter, which Opportunities to fetch.
    */
@@ -1313,6 +1491,10 @@ export type OpportunityCreateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
+  /**
    * The data needed to create a Opportunity.
    */
   data: Prisma.XOR<Prisma.OpportunityCreateInput, Prisma.OpportunityUncheckedCreateInput>
@@ -1360,6 +1542,10 @@ export type OpportunityUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the Opportunity
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
   /**
    * The data needed to update a Opportunity.
    */
@@ -1427,6 +1613,10 @@ export type OpportunityUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
+  /**
    * The filter to search for the Opportunity to update in case it exists.
    */
   where: Prisma.OpportunityWhereUniqueInput
@@ -1453,6 +1643,10 @@ export type OpportunityDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
+  /**
    * Filter which Opportunity to delete.
    */
   where: Prisma.OpportunityWhereUniqueInput
@@ -1473,6 +1667,30 @@ export type OpportunityDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
+ * Opportunity.savedBy
+ */
+export type Opportunity$savedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SavedOpportunity
+   */
+  select?: Prisma.SavedOpportunitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SavedOpportunity
+   */
+  omit?: Prisma.SavedOpportunityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SavedOpportunityInclude<ExtArgs> | null
+  where?: Prisma.SavedOpportunityWhereInput
+  orderBy?: Prisma.SavedOpportunityOrderByWithRelationInput | Prisma.SavedOpportunityOrderByWithRelationInput[]
+  cursor?: Prisma.SavedOpportunityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SavedOpportunityScalarFieldEnum | Prisma.SavedOpportunityScalarFieldEnum[]
+}
+
+/**
  * Opportunity without action
  */
 export type OpportunityDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1484,4 +1702,8 @@ export type OpportunityDefaultArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the Opportunity
    */
   omit?: Prisma.OpportunityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpportunityInclude<ExtArgs> | null
 }

@@ -16,6 +16,8 @@ export const metadata: Metadata = {
     "Discover jobs, internships, scholarships, courses, remote work, training, and volunteer opportunities in KaarYab Afghanistan.",
 };
 
+export const dynamic = "force-dynamic";
+
 const targetUsers = [
   "Students",
   "Fresh graduates",
@@ -76,8 +78,8 @@ export default async function Home() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href="/opportunities">Browse opportunities</LinkButton>
-              <LinkButton href="/add-opportunity" variant="secondary">
-                Add opportunity
+              <LinkButton href="/contact" variant="secondary">
+                Contact KaarYab
               </LinkButton>
             </div>
           </div>

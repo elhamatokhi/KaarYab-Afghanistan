@@ -4,6 +4,7 @@ import {
   getOpportunityById,
   updateOpportunity,
 } from "@/features/opportunities/data";
+import { requireAdminMutation } from "@/features/auth/authorization";
 import {
   jsonBadRequest,
   jsonInternalError,
@@ -38,12 +39,16 @@ export async function GET(
   }
 }
 
-// Capstone MVP note: mutation endpoints are intentionally unprotected until
-// authentication and authorization are added in a later phase.
 export async function PATCH(
   request: Request,
   { params }: OpportunityRouteContext,
 ) {
+  const authorizationError = await requireAdminMutation();
+
+  if (authorizationError) {
+    return authorizationError;
+  }
+
   const { id } = await params;
   const body = await parseJsonRequest(request);
 
@@ -71,12 +76,16 @@ export async function PATCH(
   }
 }
 
-// Capstone MVP note: mutation endpoints are intentionally unprotected until
-// authentication and authorization are added in a later phase.
 export async function DELETE(
   _request: Request,
   { params }: OpportunityRouteContext,
 ) {
+  const authorizationError = await requireAdminMutation();
+
+  if (authorizationError) {
+    return authorizationError;
+  }
+
   const { id } = await params;
 
   try {

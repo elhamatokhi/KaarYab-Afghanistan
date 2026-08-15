@@ -1,22 +1,47 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/store/store";
 
-export const SAVED_OPPORTUNITIES_STORAGE_KEY = "kaaryab:saved-opportunity-ids";
+type SavedOpportunitiesStatus = "idle" | "loading" | "ready" | "error";
 
 type SavedOpportunitiesState = {
   ids: string[];
-  hydrated: boolean;
+  status: SavedOpportunitiesStatus;
+  accountKey: string | null;
 };
 
 const initialState: SavedOpportunitiesState = {
   ids: [],
-  hydrated: false,
+  status: "idle",
+  accountKey: null,
 };
 
 const savedOpportunitiesSlice = createSlice({
   name: "savedOpportunities",
   initialState,
   reducers: {
+    beginSavedOpportunitiesLoad(
+      state,
+      action: PayloadAction<{ accountKey: string }>,
+    ) {
+      if (state.accountKey !== action.payload.accountKey) {
+        state.ids = [];
+      }
+
+      state.accountKey = action.payload.accountKey;
+      state.status = "loading";
+    },
+    setSavedOpportunities(
+      state,
+      action: PayloadAction<{ ids: string[]; accountKey: string }>,
+    ) {
+      state.ids = uniqueIds(action.payload.ids);
+      state.accountKey = action.payload.accountKey;
+      state.status = "ready";
+    },
+    markSavedOpportunitiesError(state) {
+      state.ids = [];
+      state.status = "error";
+    },
     saveOpportunity(state, action: PayloadAction<string>) {
       const id = action.payload.trim();
 
@@ -27,35 +52,21 @@ const savedOpportunitiesSlice = createSlice({
     removeOpportunity(state, action: PayloadAction<string>) {
       state.ids = state.ids.filter((id) => id !== action.payload);
     },
-    toggleOpportunity(state, action: PayloadAction<string>) {
-      const id = action.payload.trim();
-
-      if (!id) {
-        return;
-      }
-
-      if (state.ids.includes(id)) {
-        state.ids = state.ids.filter((savedId) => savedId !== id);
-      } else {
-        state.ids.push(id);
-      }
-    },
     clearSavedOpportunities(state) {
       state.ids = [];
-    },
-    hydrateSavedOpportunities(state, action: PayloadAction<string[]>) {
-      state.ids = uniqueIds(action.payload);
-      state.hydrated = true;
+      state.status = "idle";
+      state.accountKey = null;
     },
   },
 });
 
 export const {
+  beginSavedOpportunitiesLoad,
   clearSavedOpportunities,
-  hydrateSavedOpportunities,
+  markSavedOpportunitiesError,
   removeOpportunity,
   saveOpportunity,
-  toggleOpportunity,
+  setSavedOpportunities,
 } = savedOpportunitiesSlice.actions;
 
 export const selectSavedOpportunityIds = (state: RootState) =>
@@ -64,46 +75,14 @@ export const selectSavedOpportunityIds = (state: RootState) =>
 export const selectSavedOpportunityCount = (state: RootState) =>
   state.savedOpportunities.ids.length;
 
-export const selectSavedOpportunitiesHydrated = (state: RootState) =>
-  state.savedOpportunities.hydrated;
+export const selectSavedOpportunitiesStatus = (state: RootState) =>
+  state.savedOpportunities.status;
+
+export const selectSavedOpportunitiesAccountKey = (state: RootState) =>
+  state.savedOpportunities.accountKey;
 
 export function selectIsOpportunitySaved(state: RootState, id: string) {
   return state.savedOpportunities.ids.includes(id);
-}
-
-export function parsePersistedSavedOpportunityIds(
-  storedValue: string | null,
-  validOpportunityIds: readonly string[],
-) {
-  if (!storedValue) {
-    return [];
-  }
-
-  try {
-    const parsedValue: unknown = JSON.parse(storedValue);
-
-    if (!Array.isArray(parsedValue)) {
-      return [];
-    }
-
-    return validateSavedOpportunityIds(parsedValue, validOpportunityIds);
-  } catch {
-    return [];
-  }
-}
-
-export function validateSavedOpportunityIds(
-  values: unknown[],
-  validOpportunityIds: readonly string[],
-) {
-  const validIds = new Set(validOpportunityIds);
-
-  return uniqueIds(
-    values.filter(
-      (value): value is string =>
-        typeof value === "string" && validIds.has(value),
-    ),
-  );
 }
 
 function uniqueIds(ids: readonly string[]) {

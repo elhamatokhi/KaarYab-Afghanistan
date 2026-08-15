@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageContainer, PageHeader } from "@/components/ui";
+import { requireAdminPage } from "@/features/auth/authorization";
 import { OpportunityForm } from "@/features/opportunities/components/opportunity-form";
 import { getOpportunityById } from "@/features/opportunities/data";
 import { opportunityToFormValues } from "@/features/opportunities/form-utils";
@@ -32,6 +33,7 @@ export default async function EditOpportunityPage({
   params,
 }: EditOpportunityPageProps) {
   const { id } = await params;
+  await requireAdminPage(`/opportunities/${id}/edit`);
   const opportunity = await getOpportunityById(id);
 
   if (!opportunity) {

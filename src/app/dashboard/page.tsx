@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CalendarDays, Plus, Star, Tags, Trophy } from "lucide-react";
 import { Badge, PageContainer, PageHeader } from "@/components/ui";
 import { DashboardOpportunityManager } from "@/features/dashboard/dashboard-opportunity-manager";
+import { requireAdminPage } from "@/features/auth/authorization";
 import { CATEGORY_LABELS } from "@/features/opportunities/constants";
 import { getAllOpportunities } from "@/features/opportunities/data";
 import type {
@@ -23,6 +24,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
+  await requireAdminPage("/dashboard");
   const opportunities = await getDashboardOpportunities();
 
   if (!opportunities) {

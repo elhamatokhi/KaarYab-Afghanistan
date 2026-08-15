@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Badge, PageContainer, PageHeader } from "@/components/ui";
-import { demoOpportunities } from "@/features/opportunities/demo-data";
+import { getCurrentSession } from "@/features/auth/authorization";
+import { getSavedOpportunitiesForUser } from "@/features/saved/data";
 import { SavedOpportunitiesPage } from "@/features/saved/saved-opportunities-page";
 
 export const metadata: Metadata = {
@@ -9,7 +11,19 @@ export const metadata: Metadata = {
     "Review opportunities you saved while using KaarYab Afghanistan.",
 };
 
-export default function SavedPage() {
+export default async function SavedPage() {
+  const session = await getCurrentSession();
+
+  if (!session?.user) {
+    redirect(`/login?callbackUrl=${encodeURIComponent("/saved")}`);
+  }
+
+  if (session.user.role !== "USER") {
+    redirect("/dashboard");
+  }
+
+  const opportunities = await getSavedOpportunitiesForUser(session.user.id);
+
   return (
     <PageContainer>
       <div className="space-y-8">
@@ -22,7 +36,10 @@ export default function SavedPage() {
           />
         </div>
 
-        <SavedOpportunitiesPage opportunities={demoOpportunities} />
+        <SavedOpportunitiesPage
+          accountKey={session.user.id}
+          opportunities={opportunities}
+        />
       </div>
     </PageContainer>
   );
