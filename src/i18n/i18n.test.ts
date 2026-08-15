@@ -13,6 +13,7 @@ import {
 } from "@/i18n/format";
 import { en, messages } from "@/i18n/messages";
 import { translateValidationMessage } from "@/i18n/validation";
+import { getPublicNavItemsForRole } from "@/components/site-navigation";
 import { getRoleInterfacePermissions } from "@/features/auth/access-control";
 import { demoOpportunities } from "@/features/opportunities/demo-data";
 import { localizeDemoOpportunity } from "@/features/opportunities/demo-localization";
@@ -171,6 +172,26 @@ describe("role-specific UI permissions", () => {
       canUseSavedOpportunities: false,
       canManageOpportunities: true,
     });
+  });
+
+  it("keeps Home navigation for anonymous and USER accounts but removes it for ADMIN", () => {
+    expect(getPublicNavItemsForRole(undefined).map((item) => item.href)).toEqual([
+      "/",
+      "/opportunities",
+      "/about",
+      "/contact",
+    ]);
+    expect(getPublicNavItemsForRole("USER").map((item) => item.href)).toEqual([
+      "/",
+      "/opportunities",
+      "/about",
+      "/contact",
+    ]);
+    expect(getPublicNavItemsForRole("ADMIN").map((item) => item.href)).toEqual([
+      "/opportunities",
+      "/about",
+      "/contact",
+    ]);
   });
 });
 
