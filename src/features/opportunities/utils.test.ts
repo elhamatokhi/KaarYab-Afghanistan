@@ -6,15 +6,22 @@ import {
   calculateCategoryDistribution,
   calculateDashboardStats,
   filterOpportunities,
+  filterOpportunitiesByCategory,
+  filterOpportunitiesByCountryOrLocation,
+  filterOpportunitiesByDeadlineStatus,
+  filterOpportunitiesByEmploymentType,
   filterOpportunitiesBySearchQuery,
+  filterOpportunitiesByWorkMode,
   findOpportunityById,
   formatOpportunityDate,
   getDaysUntilDeadline,
+  getFilteredAndSortedOpportunities,
   getFeaturedOpportunities,
   getRelatedOpportunities,
   isDemoApplyLink,
   isOpportunityExpired,
   isOpportunityExpiringSoon,
+  parseOpportunitySearchParams,
   sortOpportunities,
 } from "@/features/opportunities/utils";
 
@@ -41,15 +48,57 @@ describe("opportunity utilities", () => {
     );
   });
 
-  it("matches search queries across important opportunity fields", () => {
+  it("matches search queries by title or organization", () => {
     const results = filterOpportunitiesBySearchQuery(
       demoOpportunities,
-      "spreadsheet",
+      "CodeBridge",
     );
 
     expect(results.map((opportunity) => opportunity.id)).toEqual([
-      "opp-remote-junior-data-assistant",
+      "opp-frontend-web-development-internship",
     ]);
+
+    expect(
+      filterOpportunitiesBySearchQuery(demoOpportunities, "spreadsheet"),
+    ).toHaveLength(0);
+  });
+
+  it("applies individual category, location, work mode, and type filters", () => {
+    expect(
+      filterOpportunitiesByCategory(demoOpportunities, "scholarship").map(
+        (opportunity) => opportunity.id,
+      ),
+    ).toEqual([
+      "opp-women-in-stem-scholarship",
+      "opp-undergraduate-access-grant",
+    ]);
+
+    expect(
+      filterOpportunitiesByCountryOrLocation(demoOpportunities, "online").map(
+        (opportunity) => opportunity.id,
+      ),
+    ).toEqual([
+      "opp-remote-junior-data-assistant",
+      "opp-frontend-web-development-internship",
+      "opp-english-career-readiness-course",
+      "opp-climate-storytelling-micro-grant",
+    ]);
+
+    expect(
+      filterOpportunitiesByWorkMode(demoOpportunities, "hybrid").map(
+        (opportunity) => opportunity.id,
+      ),
+    ).toEqual([
+      "opp-youth-digital-skills-fellowship",
+      "opp-junior-communications-officer",
+      "opp-undergraduate-access-grant",
+    ]);
+
+    expect(
+      filterOpportunitiesByEmploymentType(demoOpportunities, "contract").map(
+        (opportunity) => opportunity.id,
+      ),
+    ).toEqual(["opp-remote-junior-data-assistant"]);
   });
 
   it("applies combined filters without mutating the original list", () => {
@@ -105,6 +154,20 @@ describe("opportunity utilities", () => {
     expect(isOpportunityExpired(expiredOpportunity, referenceDate)).toBe(true);
   });
 
+  it("filters by deadline status", () => {
+    expect(
+      filterOpportunitiesByDeadlineStatus(
+        demoOpportunities,
+        "expiring-soon",
+        referenceDate,
+      ).map((opportunity) => opportunity.id),
+    ).toEqual([
+      "opp-youth-digital-skills-fellowship",
+      "opp-remote-junior-data-assistant",
+      "opp-junior-communications-officer",
+    ]);
+  });
+
   it("sorts by newest and closest deadline", () => {
     expect(sortOpportunities(demoOpportunities, "newest")[0]?.id).toBe(
       "opp-climate-storytelling-micro-grant",
@@ -112,6 +175,61 @@ describe("opportunity utilities", () => {
     expect(sortOpportunities(demoOpportunities, "closest-deadline")[0]?.id).toBe(
       "opp-junior-communications-officer",
     );
+  });
+
+  it("parses valid query parameters and applies filtered sorting", () => {
+    const params = parseOpportunitySearchParams({
+      search: "Grant",
+      category: "scholarship",
+      location: "Pakistan",
+      workMode: "hybrid",
+      employmentType: "not-applicable",
+      deadlineStatus: "active",
+      sort: "newest",
+    });
+
+    expect(params).toEqual({
+      filters: {
+        query: "Grant",
+        category: "scholarship",
+        countryOrLocation: "Pakistan",
+        workMode: "hybrid",
+        employmentType: "not-applicable",
+        deadlineStatus: "active",
+      },
+      sort: "newest",
+    });
+    expect(
+      getFilteredAndSortedOpportunities(
+        demoOpportunities,
+        params,
+        referenceDate,
+      ).map((opportunity) => opportunity.id),
+    ).toEqual(["opp-undergraduate-access-grant"]);
+  });
+
+  it("falls back safely for invalid query parameters", () => {
+    expect(
+      parseOpportunitySearchParams({
+        search: [" communications ", "ignored"],
+        category: "missing",
+        location: " Kabul ",
+        workMode: "virtual",
+        employmentType: "permanent",
+        deadlineStatus: "soon",
+        sort: "oldest",
+      }),
+    ).toEqual({
+      filters: {
+        query: "communications",
+        category: "all",
+        countryOrLocation: "Kabul",
+        workMode: "all",
+        employmentType: "all",
+        deadlineStatus: "all",
+      },
+      sort: "closest-deadline",
+    });
   });
 
   it("calculates dashboard totals", () => {

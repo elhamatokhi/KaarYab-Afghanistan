@@ -11,20 +11,20 @@
 - Dynamic opportunity details page with metadata, not-found handling, requirements, tags, application sidebar, and related listings.
 - Complete Home and About pages using existing demo data, constants, cards, and utilities.
 - Complete Contact page with a local React Hook Form and Zod validation experience.
+- URL-based opportunity search, filtering, sorting, result counts, and no-results states.
 
 ## Remaining Implementation Order
 
-1. Add URL-based opportunity search, filtering, and sorting.
-2. Complete the saved-opportunities Context with localStorage persistence.
-3. Build the Saved Opportunities page.
-4. Add React Hook Form and Zod schemas for create and edit forms.
-5. Build the dashboard statistics view.
-6. Add route loading, empty, error, and not-found states where still missing.
-7. Create and verify Prisma migration and seed against PostgreSQL.
-8. Add Next.js Route Handlers for opportunity CRUD.
-9. Connect listing, detail, create, edit, and delete flows to PostgreSQL.
-10. Add focused tests for filters, forms, saved state, dashboard calculations, and CRUD boundaries.
-11. Complete README deployment notes and deploy to Vercel with a production database.
+1. Complete the saved-opportunities Context with localStorage persistence.
+2. Build the Saved Opportunities page.
+3. Add React Hook Form and Zod schemas for create and edit forms.
+4. Build the dashboard statistics view.
+5. Add route loading, empty, error, and not-found states where still missing.
+6. Create and verify Prisma migration and seed against PostgreSQL.
+7. Add Next.js Route Handlers for opportunity CRUD.
+8. Connect listing, detail, create, edit, and delete flows to PostgreSQL.
+9. Add focused tests for forms, saved state, dashboard calculations, and CRUD boundaries.
+10. Complete README deployment notes and deploy to Vercel with a production database.
 
 ## Continuous Requirements
 

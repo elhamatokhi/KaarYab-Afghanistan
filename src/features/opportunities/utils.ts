@@ -1,18 +1,28 @@
 import {
-  CATEGORY_LABELS,
+  DEADLINE_STATUSES,
+  EMPLOYMENT_TYPES,
   EXPIRING_SOON_DAYS,
   OPPORTUNITY_CATEGORIES,
+  OPPORTUNITY_SORT_OPTIONS,
+  WORK_MODES,
 } from "@/features/opportunities/constants";
 import type {
   CategoryDistributionItem,
   DeadlineStatus,
+  EmploymentType,
   Opportunity,
+  OpportunityCategory,
   OpportunityDashboardStats,
   OpportunityFilters,
+  OpportunitySearchParams,
   OpportunitySort,
+  WorkMode,
 } from "@/features/opportunities/types";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+export const DEFAULT_OPPORTUNITY_SORT: OpportunitySort = "closest-deadline";
+
+type RawSearchParams = Record<string, string | string[] | undefined>;
 
 export function findOpportunityById(
   opportunities: Opportunity[],
@@ -65,16 +75,7 @@ export function filterOpportunitiesBySearchQuery(
   }
 
   return opportunities.filter((opportunity) =>
-    [
-      opportunity.title,
-      opportunity.organization,
-      CATEGORY_LABELS[opportunity.category],
-      opportunity.location,
-      opportunity.country,
-      opportunity.description,
-      ...opportunity.requirements,
-      ...opportunity.tags,
-    ]
+    [opportunity.title, opportunity.organization]
       .map(normalizeSearchValue)
       .some((value) => value.includes(normalizedQuery)),
   );
@@ -173,7 +174,7 @@ export function filterOpportunities(
 
 export function sortOpportunities(
   opportunities: Opportunity[],
-  sort: OpportunitySort,
+  sort: OpportunitySort = DEFAULT_OPPORTUNITY_SORT,
 ): Opportunity[] {
   return [...opportunities].sort((firstOpportunity, secondOpportunity) => {
     if (sort === "closest-deadline") {
@@ -188,6 +189,68 @@ export function sortOpportunities(
       parseIsoDate(firstOpportunity.createdAt).getTime()
     );
   });
+}
+
+export function getFilteredAndSortedOpportunities(
+  opportunities: Opportunity[],
+  params: OpportunitySearchParams,
+  referenceDate = new Date(),
+): Opportunity[] {
+  return sortOpportunities(
+    filterOpportunities(opportunities, params.filters, referenceDate),
+    params.sort,
+  );
+}
+
+export function parseOpportunitySearchParams(
+  searchParams: RawSearchParams,
+): OpportunitySearchParams {
+  return {
+    filters: {
+      query: getSingleSearchParam(searchParams.search),
+      category: parseOption<OpportunityCategory>(
+        getSingleSearchParam(searchParams.category),
+        OPPORTUNITY_CATEGORIES.map((category) => category.value),
+        "all",
+      ),
+      countryOrLocation:
+        getSingleSearchParam(searchParams.location) ||
+        getSingleSearchParam(searchParams.countryOrLocation),
+      workMode: parseOption<WorkMode>(
+        getSingleSearchParam(searchParams.workMode),
+        WORK_MODES.map((workMode) => workMode.value),
+        "all",
+      ),
+      employmentType: parseOption<EmploymentType>(
+        getSingleSearchParam(searchParams.employmentType),
+        EMPLOYMENT_TYPES.map((employmentType) => employmentType.value),
+        "all",
+      ),
+      deadlineStatus: parseOption<DeadlineStatus>(
+        getSingleSearchParam(searchParams.deadlineStatus),
+        DEADLINE_STATUSES.map((status) => status.value),
+        "all",
+      ),
+    },
+    sort: parseRequiredOption<OpportunitySort>(
+      getSingleSearchParam(searchParams.sort),
+      OPPORTUNITY_SORT_OPTIONS.map((sortOption) => sortOption.value),
+      DEFAULT_OPPORTUNITY_SORT,
+    ),
+  };
+}
+
+export function hasActiveOpportunityFilters(
+  filters: OpportunitySearchParams["filters"],
+): boolean {
+  return Boolean(
+    filters.query ||
+      filters.countryOrLocation ||
+      filters.category !== "all" ||
+      filters.workMode !== "all" ||
+      filters.employmentType !== "all" ||
+      filters.deadlineStatus !== "all",
+  );
 }
 
 export function getRelatedOpportunities(
@@ -291,6 +354,32 @@ export function isDemoApplyLink(applyLink: Opportunity["applyLink"]) {
 
 function normalizeSearchValue(value = "") {
   return value.trim().toLowerCase();
+}
+
+function getSingleSearchParam(value: string | string[] | undefined) {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+
+  return rawValue?.trim() ?? "";
+}
+
+function parseOption<TOption extends string>(
+  value: string,
+  allowedValues: readonly TOption[],
+  fallback: TOption | "all",
+) {
+  if (!value || value === "all") {
+    return fallback;
+  }
+
+  return allowedValues.includes(value as TOption) ? (value as TOption) : fallback;
+}
+
+function parseRequiredOption<TOption extends string>(
+  value: string,
+  allowedValues: readonly TOption[],
+  fallback: TOption,
+) {
+  return allowedValues.includes(value as TOption) ? (value as TOption) : fallback;
 }
 
 function getRelatedOpportunityScore(

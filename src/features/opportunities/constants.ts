@@ -31,10 +31,17 @@ export const DEADLINE_STATUSES = [
   { value: "expired", label: "Expired" },
 ] as const;
 
+export const OPPORTUNITY_SORT_OPTIONS = [
+  { value: "closest-deadline", label: "Closest deadline" },
+  { value: "newest", label: "Newest" },
+] as const;
+
 export type OpportunityCategory = (typeof OPPORTUNITY_CATEGORIES)[number]["value"];
 export type WorkMode = (typeof WORK_MODES)[number]["value"];
 export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number]["value"];
 export type DeadlineStatus = (typeof DEADLINE_STATUSES)[number]["value"];
+export type OpportunitySortOption =
+  (typeof OPPORTUNITY_SORT_OPTIONS)[number]["value"];
 
 export const CATEGORY_LABELS = Object.fromEntries(
   OPPORTUNITY_CATEGORIES.map((category) => [category.value, category.label]),

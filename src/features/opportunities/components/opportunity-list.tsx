@@ -6,12 +6,16 @@ type OpportunityListProps = {
   opportunities: Opportunity[];
   heading?: string;
   countLabel?: string;
+  emptyTitle?: string;
+  emptyDescription?: string;
 };
 
 export function OpportunityList({
   opportunities,
   heading = "Demo opportunities",
   countLabel,
+  emptyTitle = "No opportunities found",
+  emptyDescription = "There are no opportunities to show yet. Future search and filtering tools will use this same empty state.",
 }: OpportunityListProps) {
   if (opportunities.length === 0) {
     return (
@@ -21,11 +25,10 @@ export function OpportunityList({
       >
         <Search aria-hidden="true" className="mx-auto size-8 text-muted" />
         <h2 className="mt-4 text-xl font-semibold text-primary">
-          No opportunities found
+          {emptyTitle}
         </h2>
         <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
-          There are no opportunities to show yet. Future search and filtering
-          tools will use this same empty state.
+          {emptyDescription}
         </p>
       </section>
     );

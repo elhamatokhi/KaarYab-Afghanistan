@@ -2,6 +2,7 @@ import type {
   DeadlineStatus,
   EmploymentType,
   OpportunityCategory,
+  OpportunitySortOption,
   WorkMode,
 } from "@/features/opportunities/constants";
 
@@ -28,7 +29,7 @@ export type Opportunity = {
   updatedAt: IsoDateString;
 };
 
-export type OpportunitySort = "newest" | "closest-deadline";
+export type OpportunitySort = OpportunitySortOption;
 
 export type OpportunityFilters = {
   query?: string;
@@ -37,6 +38,11 @@ export type OpportunityFilters = {
   workMode?: WorkMode | "all";
   employmentType?: EmploymentType | "all";
   deadlineStatus?: DeadlineStatus | "all";
+};
+
+export type OpportunitySearchParams = {
+  filters: Required<OpportunityFilters>;
+  sort: OpportunitySort;
 };
 
 export type OpportunityDashboardStats = {
