@@ -3,12 +3,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { hashPassword } from "../src/features/auth/password";
 import { registerInputSchema } from "../src/features/auth/validation";
-
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-  throw new Error("DATABASE_URL is required to provision the admin user.");
-}
+import { getRequiredDatabaseUrl } from "../src/lib/database-url";
 
 const adminInput = registerInputSchema.parse({
   name: process.env.INITIAL_ADMIN_NAME ?? "KaarYab Admin",
@@ -16,7 +11,9 @@ const adminInput = registerInputSchema.parse({
   password: process.env.INITIAL_ADMIN_PASSWORD,
 });
 
-const adapter = new PrismaPg({ connectionString });
+const adapter = new PrismaPg({
+  connectionString: getRequiredDatabaseUrl("DATABASE_URL"),
+});
 const prisma = new PrismaClient({ adapter });
 
 async function main() {

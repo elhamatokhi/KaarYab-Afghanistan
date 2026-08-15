@@ -2,14 +2,11 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { WORK_MODE_TO_PRISMA } from "../src/features/opportunities/constants";
 import { demoOpportunities } from "../src/features/opportunities/demo-data";
+import { getRequiredDatabaseUrl } from "../src/lib/database-url";
 
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-  throw new Error("DATABASE_URL is required to seed the database.");
-}
-
-const adapter = new PrismaPg({ connectionString });
+const adapter = new PrismaPg({
+  connectionString: getRequiredDatabaseUrl("DATABASE_URL"),
+});
 const prisma = new PrismaClient({ adapter });
 
 async function main() {

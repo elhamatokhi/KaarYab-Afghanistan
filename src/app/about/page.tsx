@@ -90,10 +90,10 @@ export default async function AboutPage() {
         </section>
 
         <section className="rounded-lg border border-warning/30 bg-warning-soft p-5 sm:p-6">
-          <h2 className="text-2xl font-semibold text-warning">
+          <h2 className="text-2xl font-semibold text-warning-foreground">
             {t("about.demoTitle")}
           </h2>
-          <p className="mt-3 text-sm leading-6 text-warning">
+          <p className="mt-3 text-sm leading-6 text-warning-foreground">
             {t("about.demoDescription")}
           </p>
         </section>

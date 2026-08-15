@@ -4,6 +4,7 @@ import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { getI18n } from "@/i18n/server";
+import { getSiteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const kaaryabSans = localFont({
@@ -19,6 +20,7 @@ const kaaryabMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "KaarYab Afghanistan",
   description: "Opportunity finder foundation for Afghan youth.",
 };

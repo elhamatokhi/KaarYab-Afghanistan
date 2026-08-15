@@ -98,9 +98,9 @@ type BadgeProps = {
 
 const badgeTones = {
   neutral: "border-border bg-surface text-muted",
-  accent: "border-accent/30 bg-accent-soft text-accent",
+  accent: "border-accent/30 bg-accent-soft text-accent-foreground",
   success: "border-success/30 bg-success-soft text-success",
-  warning: "border-warning/30 bg-warning-soft text-warning",
+  warning: "border-warning/30 bg-warning-soft text-warning-foreground",
   danger: "border-danger/30 bg-danger-soft text-danger",
 };
 

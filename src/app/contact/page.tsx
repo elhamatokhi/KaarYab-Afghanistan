@@ -73,23 +73,10 @@ export default async function ContactPage() {
           })}
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <section className="grid gap-6">
           <ContactForm />
 
-          <aside className="space-y-4 rounded-lg border border-border bg-surface-elevated p-5">
-            <div className="inline-flex size-10 items-center justify-center rounded-md bg-success-soft text-success">
-              <ShieldCheck aria-hidden="true" className="size-5" />
-            </div>
-            <h2 className="text-xl font-semibold text-primary">
-              {t("contact.status")}
-            </h2>
-            <p className="text-sm leading-6 text-muted">
-              {t("contact.statusOne")}
-            </p>
-            <p className="text-sm leading-6 text-muted">
-              {t("contact.statusTwo")}
-            </p>
-          </aside>
+         
         </section>
       </div>
     </PageContainer>

@@ -203,7 +203,7 @@ export default async function Home() {
         <section className="grid gap-6 lg:grid-cols-3">
           {howItWorksSteps.map((step, index) => (
             <article key={step.id} className="rounded-lg border border-border bg-card p-5">
-              <p className="text-sm font-semibold text-accent">
+              <p className="text-sm font-semibold text-accent-foreground">
                 {t("home.step", {
                   number: formatLocalizedNumber(index + 1, locale),
                 })}
@@ -242,7 +242,7 @@ export default async function Home() {
         <section className="rounded-lg border border-border bg-surface-elevated p-6">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="max-w-2xl">
-              <div className="flex items-center gap-2 text-sm font-semibold text-accent">
+              <div className="flex items-center gap-2 text-sm font-semibold text-accent-foreground">
                 <UsersRound aria-hidden="true" className="size-4" />
                 {t("home.projectInput")}
               </div>

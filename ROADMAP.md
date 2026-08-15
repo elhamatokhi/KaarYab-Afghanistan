@@ -20,13 +20,14 @@
 - Auth.js credentials authentication with Prisma-backed users, role-based authorization, and admin-only opportunity management.
 - Role-specific navigation and controls for anonymous visitors, USER accounts, and ADMIN accounts.
 - Cookie-backed multilingual UI for English, Dari, Pashto, and German with server-rendered language, direction, translated static UI, localized validation messages, and localized seeded demo records.
+- Production-readiness documentation, sitemap, robots configuration, Vercel Prisma generation workflow, and Neon SSL-mode normalization for the Node PostgreSQL adapter.
 
 ## Remaining Implementation Order
 
 1. Review all multilingual copy with fluent Dari, Pashto, and German speakers before production launch.
 2. Add route loading, empty, error, and not-found states where still missing.
 3. Add focused browser-level tests for authenticated form flows, saved-opportunity flows, dashboard interactions, and locale switching.
-4. Complete README deployment notes and deploy to Vercel with production environment variables.
+4. Deploy to Vercel with production environment variables after final manual QA.
 
 ## Continuous Requirements
 

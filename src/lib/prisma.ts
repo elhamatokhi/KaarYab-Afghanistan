@@ -1,18 +1,15 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { getRequiredDatabaseUrl } from "@/lib/database-url";
 
 const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
 };
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
-
-  if (!connectionString) {
-    throw new Error("DATABASE_URL is required to initialize Prisma.");
-  }
-
-  const adapter = new PrismaPg({ connectionString });
+  const adapter = new PrismaPg({
+    connectionString: getRequiredDatabaseUrl("DATABASE_URL"),
+  });
 
   return new PrismaClient({ adapter });
 }
