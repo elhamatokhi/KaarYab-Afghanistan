@@ -3,12 +3,12 @@ import Link from "next/link";
 import { ArrowRight, Globe2, Search, UsersRound } from "lucide-react";
 import { Badge, LinkButton, PageContainer, SectionHeading } from "@/components/ui";
 import { OPPORTUNITY_CATEGORIES } from "@/features/opportunities/constants";
-import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
-import { demoOpportunities } from "@/features/opportunities/demo-data";
 import {
-  calculateDashboardStats,
+  getAllOpportunities,
   getFeaturedOpportunities,
-} from "@/features/opportunities/utils";
+} from "@/features/opportunities/data";
+import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
+import { calculateDashboardStats } from "@/features/opportunities/utils";
 
 export const metadata: Metadata = {
   title: "KaarYab Afghanistan | Opportunity finder for Afghan youth",
@@ -43,16 +43,19 @@ const howItWorksSteps = [
   },
 ];
 
-export default function Home() {
-  const featuredOpportunities = getFeaturedOpportunities(demoOpportunities).slice(
-    0,
-    3,
-  );
-  const stats = calculateDashboardStats(demoOpportunities);
-  const onlineCount = demoOpportunities.filter(
+export default async function Home() {
+  const data = await getHomeOpportunities();
+
+  if (!data) {
+    return <OpportunityDataErrorPage />;
+  }
+
+  const { featuredOpportunities, opportunities } = data;
+  const stats = calculateDashboardStats(opportunities);
+  const onlineCount = opportunities.filter(
     (opportunity) => opportunity.location === "Online",
   ).length;
-  const internationalCount = demoOpportunities.filter(
+  const internationalCount = opportunities.filter(
     (opportunity) =>
       opportunity.country !== "Afghanistan" && opportunity.country !== "Remote",
   ).length;
@@ -247,5 +250,34 @@ function StatItem({ label, value }: { label: string; value: number }) {
       <dt className="text-sm font-medium text-muted">{label}</dt>
       <dd className="mt-2 text-3xl font-semibold text-primary">{value}</dd>
     </div>
+  );
+}
+
+async function getHomeOpportunities() {
+  try {
+    const [opportunities, featuredOpportunities] = await Promise.all([
+      getAllOpportunities(),
+      getFeaturedOpportunities(3),
+    ]);
+
+    return { featuredOpportunities, opportunities };
+  } catch {
+    return null;
+  }
+}
+
+function OpportunityDataErrorPage() {
+  return (
+    <PageContainer>
+      <section className="rounded-lg border border-border bg-card px-5 py-10 text-center">
+        <h1 className="text-2xl font-semibold text-primary">
+          Opportunities are temporarily unavailable
+        </h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
+          KaarYab could not load opportunity listings right now. Please try
+          again later.
+        </p>
+      </section>
+    </PageContainer>
   );
 }

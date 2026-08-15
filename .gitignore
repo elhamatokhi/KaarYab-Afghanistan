@@ -37,6 +37,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# Neon local metadata
+.neon
+.neon/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

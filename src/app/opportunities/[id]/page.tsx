@@ -20,10 +20,13 @@ import {
 } from "@/features/opportunities/constants";
 import { DeadlineStatusBadge } from "@/features/opportunities/components/deadline-status-badge";
 import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
-import { demoOpportunities } from "@/features/opportunities/demo-data";
+import {
+  getAllOpportunities,
+  getOpportunityById,
+  isOpportunityDataAccessError,
+} from "@/features/opportunities/data";
 import { SaveOpportunityButton } from "@/features/saved/save-opportunity-button";
 import {
-  findOpportunityById,
   formatOpportunityDate,
   getOpportunityDeadlineStatus,
   getRelatedOpportunities,
@@ -38,13 +41,13 @@ export async function generateMetadata({
   params,
 }: OpportunityDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const opportunity = findOpportunityById(demoOpportunities, id);
+  const opportunity = await getOpportunityMetadataById(id);
 
   if (!opportunity) {
     return {
-      title: "Opportunity not found | KaarYab Afghanistan",
+      title: "Opportunity unavailable | KaarYab Afghanistan",
       description:
-        "The requested opportunity could not be found in KaarYab Afghanistan.",
+        "KaarYab Afghanistan could not load the requested opportunity.",
     };
   }
 
@@ -58,14 +61,20 @@ export default async function OpportunityDetailPage({
   params,
 }: OpportunityDetailPageProps) {
   const { id } = await params;
-  const opportunity = findOpportunityById(demoOpportunities, id);
+  const data = await getOpportunityDetailData(id);
 
-  if (!opportunity) {
+  if (data.status === "error") {
+    return <OpportunityDataErrorPage />;
+  }
+
+  if (!data.opportunity) {
     notFound();
   }
 
+  const { opportunity, opportunities } = data;
+
   const relatedOpportunities = getRelatedOpportunities(
-    demoOpportunities,
+    opportunities,
     opportunity,
   );
   const isExpired = getOpportunityDeadlineStatus(opportunity) === "expired";
@@ -278,6 +287,47 @@ export default async function OpportunityDetailPage({
           </section>
         ) : null}
       </div>
+    </PageContainer>
+  );
+}
+
+async function getOpportunityMetadataById(id: string) {
+  try {
+    return await getOpportunityById(id);
+  } catch (error) {
+    if (isOpportunityDataAccessError(error)) {
+      return null;
+    }
+
+    return null;
+  }
+}
+
+async function getOpportunityDetailData(id: string) {
+  try {
+    const [opportunity, opportunities] = await Promise.all([
+      getOpportunityById(id),
+      getAllOpportunities(),
+    ]);
+
+    return { opportunity, opportunities, status: "success" as const };
+  } catch {
+    return { opportunity: null, opportunities: [], status: "error" as const };
+  }
+}
+
+function OpportunityDataErrorPage() {
+  return (
+    <PageContainer>
+      <section className="rounded-lg border border-border bg-card px-5 py-10 text-center">
+        <h1 className="text-2xl font-semibold text-primary">
+          Opportunity is temporarily unavailable
+        </h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
+          KaarYab could not load this opportunity right now. Please try again
+          later.
+        </p>
+      </section>
     </PageContainer>
   );
 }

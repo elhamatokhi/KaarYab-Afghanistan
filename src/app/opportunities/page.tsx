@@ -2,8 +2,8 @@ import Link from "next/link";
 import { FilterX } from "lucide-react";
 import { Badge, PageContainer, PageHeader } from "@/components/ui";
 import { OpportunityFilterControls } from "@/app/opportunities/opportunity-filter-controls";
+import { getAllOpportunities } from "@/features/opportunities/data";
 import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
-import { demoOpportunities } from "@/features/opportunities/demo-data";
 import type { OpportunitySearchParams } from "@/features/opportunities/types";
 import {
   DEFAULT_OPPORTUNITY_SORT,
@@ -20,8 +20,14 @@ export default async function OpportunitiesPage({
   searchParams,
 }: OpportunitiesPageProps) {
   const parsedSearchParams = parseOpportunitySearchParams(await searchParams);
+  const opportunities = await getOpportunitiesForPage();
+
+  if (!opportunities) {
+    return <OpportunityDataErrorPage />;
+  }
+
   const filteredOpportunities = getFilteredAndSortedOpportunities(
-    demoOpportunities,
+    opportunities,
     parsedSearchParams,
   );
   const hasActiveFilters = hasActiveOpportunityFilters(
@@ -39,7 +45,7 @@ export default async function OpportunitiesPage({
             description="Browse jobs, internships, scholarships, courses, remote roles, training programs, and volunteer opportunities."
           />
           <p className="max-w-3xl text-sm leading-6 text-muted">
-            {demoOpportunities.length} opportunities are available.
+            {opportunities.length} opportunities are available.
           </p>
         </div>
 
@@ -51,11 +57,35 @@ export default async function OpportunitiesPage({
         <OpportunityList
           opportunities={filteredOpportunities}
           heading="Opportunity results"
-          countLabel={`Showing ${filteredOpportunities.length} of ${demoOpportunities.length} listings`}
+          countLabel={`Showing ${filteredOpportunities.length} of ${opportunities.length} listings`}
           emptyTitle="No matching opportunities"
           emptyDescription="No opportunities match the selected search, filters, and sorting options. Clear the filters or try a broader search."
         />
       </div>
+    </PageContainer>
+  );
+}
+
+async function getOpportunitiesForPage() {
+  try {
+    return await getAllOpportunities();
+  } catch {
+    return null;
+  }
+}
+
+function OpportunityDataErrorPage() {
+  return (
+    <PageContainer>
+      <section className="rounded-lg border border-border bg-card px-5 py-10 text-center">
+        <h1 className="text-2xl font-semibold text-primary">
+          Opportunities are temporarily unavailable
+        </h1>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-muted">
+          KaarYab could not load opportunity listings right now. Please try
+          again later.
+        </p>
+      </section>
     </PageContainer>
   );
 }
