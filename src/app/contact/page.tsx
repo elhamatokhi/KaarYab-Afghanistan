@@ -13,7 +13,7 @@ const contactReasons = [
   {
     title: "Share feedback",
     description:
-      "Suggest improvements to the demo experience, content structure, or accessibility.",
+      "Suggest improvements to the experience, content structure, or accessibility.",
     icon: MessageSquareText,
   },
   {
@@ -25,7 +25,7 @@ const contactReasons = [
   {
     title: "Ask project questions",
     description:
-      "Contact the capstone team about scope, roadmap, or current demo limitations.",
+      "Contact the capstone team about scope, roadmap, or current limitations.",
     icon: Mail,
   },
 ];
@@ -38,7 +38,7 @@ export default function ContactPage() {
           <Badge tone="accent">Contact KaarYab</Badge>
           <PageHeader
             title="Send questions, feedback, or future collaboration ideas."
-            description="KaarYab is still a capstone MVP using fictional demo opportunities. This contact page provides a professional local form experience before any real email service is connected."
+            description="Use this page to share feedback, ask a question, or discuss future collaboration ideas for KaarYab."
           />
         </div>
 
@@ -79,15 +79,13 @@ export default function ContactPage() {
               <ShieldCheck aria-hidden="true" className="size-5" />
             </div>
             <h2 className="text-xl font-semibold text-primary">
-              Demo contact status
+              Contact status
             </h2>
             <p className="text-sm leading-6 text-muted">
-              Submissions are simulated locally. KaarYab does not send email,
-              store messages, or create support tickets in this phase.
+              Messages are not delivered to a real inbox yet.
             </p>
             <p className="text-sm leading-6 text-muted">
-              A real contact workflow can be added later after the project has a
-              verified email service and clear data-handling requirements.
+              The form will clearly confirm this after submission.
             </p>
           </aside>
         </section>

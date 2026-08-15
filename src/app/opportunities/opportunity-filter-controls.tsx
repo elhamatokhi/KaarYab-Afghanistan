@@ -162,8 +162,7 @@ export function OpportunityFilterControls({
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-muted">
-          Search matches opportunity title and organization. Filters use the
-          fictional demo data available in this phase.
+          Search matches opportunity title and organization.
         </p>
         <p aria-live="polite" className="min-h-5 text-xs leading-5 text-muted">
           {isPending ? "Updating results..." : ""}

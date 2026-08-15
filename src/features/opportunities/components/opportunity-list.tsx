@@ -15,7 +15,7 @@ export function OpportunityList({
   heading = "Demo opportunities",
   countLabel,
   emptyTitle = "No opportunities found",
-  emptyDescription = "There are no opportunities to show yet. Future search and filtering tools will use this same empty state.",
+  emptyDescription = "There are no opportunities to show yet.",
 }: OpportunityListProps) {
   if (opportunities.length === 0) {
     return (
@@ -44,7 +44,7 @@ export function OpportunityList({
           {heading}
         </h2>
         <p className="text-sm text-muted">
-          {countLabel ?? `Showing ${opportunities.length} fictional listings`}
+          {countLabel ?? `Showing ${opportunities.length} listings`}
         </p>
       </div>
       <div className="grid min-w-0 gap-4 md:grid-cols-2 xl:grid-cols-3">

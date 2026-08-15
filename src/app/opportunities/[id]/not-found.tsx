@@ -13,8 +13,7 @@ export default function OpportunityNotFound() {
           This opportunity could not be found.
         </h1>
         <p className="mt-4 text-base leading-7 text-muted">
-          The listing may not exist in the current fictional demo data, or the
-          link may be incorrect.
+          The listing may not exist, or the link may be incorrect.
         </p>
         <Link
           href="/opportunities"

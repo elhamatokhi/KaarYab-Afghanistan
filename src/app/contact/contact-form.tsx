@@ -108,8 +108,8 @@ export function ContactForm() {
           Send a message
         </h2>
         <p className="mt-2 text-sm leading-6 text-muted">
-          This demo form validates your message in the browser. No real message
-          is sent yet.
+          Share enough detail for the project team to understand your question
+          or suggestion.
         </p>
       </div>
 
@@ -118,8 +118,7 @@ export function ContactForm() {
           role="status"
           className="rounded-md border border-success/30 bg-success-soft px-4 py-3 text-sm leading-6 text-success"
         >
-          Message checked successfully. This is a demo contact form, so no real
-          message was sent.
+          Message checked successfully. No real message was sent.
         </div>
       ) : null}
 
@@ -128,8 +127,7 @@ export function ContactForm() {
           role="alert"
           className="rounded-md border border-danger/30 bg-danger-soft px-4 py-3 text-sm leading-6 text-danger"
         >
-          The demo form could not finish the local submission simulation. Please
-          try again.
+          The form could not finish. Please try again.
         </div>
       ) : null}
 
@@ -216,7 +214,7 @@ export function ContactForm() {
 
       <div className="flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-5 text-muted">
-          Required fields are checked locally with Zod. No data is stored.
+          All fields are required.
         </p>
         <button
           type="submit"

@@ -15,6 +15,7 @@ import {
 } from "@/features/opportunities/constants";
 import { DeadlineStatusBadge } from "@/features/opportunities/components/deadline-status-badge";
 import type { Opportunity } from "@/features/opportunities/types";
+import { SaveOpportunityButton } from "@/features/saved/save-opportunity-button";
 
 type OpportunityCardProps = {
   opportunity: Opportunity;
@@ -27,16 +28,24 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
 
   return (
     <article className="flex h-full min-w-0 flex-col rounded-lg border border-border bg-card p-5 transition hover:border-action/50 hover:bg-surface">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge tone="accent">{CATEGORY_LABELS[opportunity.category]}</Badge>
-        {opportunity.featured ? (
-          <Badge tone="warning">
-            <span className="inline-flex items-center gap-1.5">
-              <Star aria-hidden="true" className="size-3.5" />
-              Featured
-            </span>
-          </Badge>
-        ) : null}
+      <div className="flex min-h-10 items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+          <Badge tone="accent">{CATEGORY_LABELS[opportunity.category]}</Badge>
+          {opportunity.featured ? (
+            <Badge tone="warning">
+              <span className="inline-flex items-center gap-1.5">
+                <Star aria-hidden="true" className="size-3.5" />
+                Featured
+              </span>
+            </Badge>
+          ) : null}
+        </div>
+        <div className="shrink-0">
+          <SaveOpportunityButton
+            opportunityId={opportunity.id}
+            opportunityTitle={opportunity.title}
+          />
+        </div>
       </div>
 
       <div className="mt-4 min-w-0">

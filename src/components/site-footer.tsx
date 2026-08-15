@@ -41,9 +41,6 @@ export function SiteFooter() {
             A capstone opportunity finder foundation for Afghan youth,
             scholarship applicants, job seekers, and organizations.
           </p>
-          <p className="mt-4 rounded-md border border-warning/30 bg-warning-soft px-3 py-2 text-sm font-medium text-warning">
-            Current opportunity records are fictional demonstration data.
-          </p>
         </div>
         {footerSections.map((section) => (
           <div key={section.title}>
@@ -66,7 +63,7 @@ export function SiteFooter() {
       <div className="border-t border-border">
         <Container className="flex flex-col gap-2 py-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
           <p>&copy; {year} KaarYab Afghanistan.</p>
-          <p>No authentication, external API, or real listings in this phase.</p>
+          <p>Built for practical opportunity discovery.</p>
         </Container>
       </div>
     </footer>

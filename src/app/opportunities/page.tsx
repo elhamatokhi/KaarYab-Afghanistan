@@ -32,16 +32,14 @@ export default async function OpportunitiesPage({
     <PageContainer>
       <div className="space-y-8">
         <div className="space-y-4">
-          <Badge tone="warning">Fictional demonstration data</Badge>
+          <Badge tone="accent">Opportunity discovery</Badge>
           <PageHeader
             eyebrow="Opportunity discovery"
             title="Explore opportunities"
-            description="Browse the current set of demo jobs, internships, scholarships, courses, remote roles, training programs, and volunteer opportunities prepared for the next listing phase."
+            description="Browse jobs, internships, scholarships, courses, remote roles, training programs, and volunteer opportunities."
           />
           <p className="max-w-3xl text-sm leading-6 text-muted">
-            {demoOpportunities.length} demo opportunities are available. These
-            listings are fictional and are included only to design and test the
-            KaarYab Afghanistan experience.
+            {demoOpportunities.length} opportunities are available.
           </p>
         </div>
 
@@ -53,9 +51,9 @@ export default async function OpportunitiesPage({
         <OpportunityList
           opportunities={filteredOpportunities}
           heading="Opportunity results"
-          countLabel={`Showing ${filteredOpportunities.length} of ${demoOpportunities.length} fictional listings`}
+          countLabel={`Showing ${filteredOpportunities.length} of ${demoOpportunities.length} listings`}
           emptyTitle="No matching opportunities"
-          emptyDescription="No fictional demo opportunities match the selected search, filters, and sorting options. Clear the filters or try a broader search."
+          emptyDescription="No opportunities match the selected search, filters, and sorting options. Clear the filters or try a broader search."
         />
       </div>
     </PageContainer>
@@ -83,8 +81,8 @@ function OpportunityFiltersForm({
             Search and filter
           </h2>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Filter settings are stored in the URL so results can be shared or
-            revisited with browser navigation.
+            Narrow the list by keyword, category, location, work mode, type, and
+            deadline.
           </p>
         </div>
         {hasActiveFilters ? (

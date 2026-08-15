@@ -7,13 +7,13 @@ import { OPPORTUNITY_CATEGORIES } from "@/features/opportunities/constants";
 export const metadata: Metadata = {
   title: "About KaarYab Afghanistan | Opportunity finder purpose",
   description:
-    "Learn how KaarYab Afghanistan is being built as a capstone opportunity finder for Afghan youth using fictional demo data during the MVP foundation.",
+    "Learn how KaarYab Afghanistan supports opportunity discovery for Afghan youth.",
 };
 
 const principles = [
   "Keep opportunity information clear and scannable.",
   "Design for mobile, tablet, desktop, light mode, and dark mode from the start.",
-  "Use fictional demo data until real database-backed submissions are ready.",
+  "Show clear deadlines, requirements, and application paths.",
   "Keep the architecture understandable for a student capstone project.",
 ];
 
@@ -56,8 +56,7 @@ export default function AboutPage() {
             <p className="mt-4 text-sm leading-7 text-muted">
               KaarYab will provide a structured directory for jobs, internships,
               scholarships, online courses, remote work, training programs, and
-              volunteer opportunities. The current version proves the interface
-              and data model before connecting real database workflows.
+              volunteer opportunities.
             </p>
           </article>
         </section>
@@ -71,8 +70,7 @@ export default function AboutPage() {
               Supported categories
             </h2>
             <p className="mt-3 text-sm leading-6 text-muted">
-              These categories come from the shared opportunity constants used
-              across demo data, listing UI, and future filters.
+              Browse the types of opportunities KaarYab is designed to organize.
             </p>
           </div>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -141,9 +139,8 @@ export default function AboutPage() {
             Explore the current foundation
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
-            The current MVP foundation includes demo listings, dynamic details,
-            responsive navigation, theme support, and tested opportunity
-            utilities.
+            Browse opportunities, ask a question, or suggest the kind of listing
+            that would help Afghan youth most.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <LinkButton href="/opportunities">View opportunities</LinkButton>

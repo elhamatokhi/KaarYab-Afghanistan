@@ -21,6 +21,7 @@ import {
 import { DeadlineStatusBadge } from "@/features/opportunities/components/deadline-status-badge";
 import { OpportunityList } from "@/features/opportunities/components/opportunity-list";
 import { demoOpportunities } from "@/features/opportunities/demo-data";
+import { SaveOpportunityButton } from "@/features/saved/save-opportunity-button";
 import {
   findOpportunityById,
   formatOpportunityDate,
@@ -43,7 +44,7 @@ export async function generateMetadata({
     return {
       title: "Opportunity not found | KaarYab Afghanistan",
       description:
-        "The requested opportunity could not be found in KaarYab Afghanistan demo listings.",
+        "The requested opportunity could not be found in KaarYab Afghanistan.",
     };
   }
 
@@ -140,8 +141,8 @@ export default async function OpportunityDetailPage({
                 Opportunity overview
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
-                Review the full fictional listing before using the external
-                application link.
+                Review the listing details before using the external
+                application option.
               </p>
               <p className="mt-5 text-base leading-8 text-primary">
                 {opportunity.description}
@@ -186,6 +187,25 @@ export default async function OpportunityDetailPage({
           </article>
 
           <aside className="space-y-4 lg:sticky lg:top-24">
+            <section
+              aria-labelledby="save-opportunity-heading"
+              className="rounded-lg border border-border bg-card p-5"
+            >
+              <h2
+                id="save-opportunity-heading"
+                className="text-xl font-semibold text-primary"
+              >
+                Bookmark
+              </h2>
+              <div className="mt-4">
+                <SaveOpportunityButton
+                  opportunityId={opportunity.id}
+                  opportunityTitle={opportunity.title}
+                  variant="full"
+                />
+              </div>
+            </section>
+
             <section
               aria-labelledby="application-heading"
               className="rounded-lg border border-border bg-card p-5"
@@ -246,14 +266,14 @@ export default async function OpportunityDetailPage({
                 Related opportunities
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted">
-                Similar fictional listings selected by category, work mode, and
-                shared tags.
+                Similar listings selected by category, work mode, and shared
+                tags.
               </p>
             </div>
             <OpportunityList
               opportunities={relatedOpportunities}
               heading="Similar listings"
-              countLabel={`Showing ${relatedOpportunities.length} related fictional listings`}
+              countLabel={`Showing ${relatedOpportunities.length} related listings`}
             />
           </section>
         ) : null}

@@ -13,7 +13,7 @@ import {
 export const metadata: Metadata = {
   title: "KaarYab Afghanistan | Opportunity finder for Afghan youth",
   description:
-    "Discover fictional demo jobs, internships, scholarships, courses, remote work, training, and volunteer opportunities in KaarYab Afghanistan.",
+    "Discover jobs, internships, scholarships, courses, remote work, training, and volunteer opportunities in KaarYab Afghanistan.",
 };
 
 const targetUsers = [
@@ -68,9 +68,8 @@ export default function Home() {
               focused place.
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted">
-              KaarYab Afghanistan helps young people scan fictional demo
-              listings today while the platform foundation grows toward a
-              database-backed opportunity directory.
+              KaarYab Afghanistan helps young people find practical paths for
+              learning, work, service, and career growth.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <LinkButton href="/opportunities">Browse opportunities</LinkButton>
@@ -87,7 +86,7 @@ export default function Home() {
             role="search"
           >
             <label htmlFor="home-search" className="text-sm font-semibold text-primary">
-              Search demo opportunities
+              Search opportunities
             </label>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row lg:flex-col">
               <input
@@ -105,10 +104,6 @@ export default function Home() {
                 Search
               </button>
             </div>
-            <p className="mt-3 text-xs leading-5 text-muted">
-              Search results will be implemented in a later phase. This form
-              already uses future-compatible URL parameters.
-            </p>
           </form>
         </section>
 
@@ -134,8 +129,8 @@ export default function Home() {
 
         <section aria-labelledby="stats-heading" className="space-y-5">
           <SectionHeading
-            title="Current demo coverage"
-            description="These numbers are calculated from the centralized fictional demo data."
+            title="Current opportunity coverage"
+            description="A quick snapshot of the opportunities available to browse."
           />
           <h2 id="stats-heading" className="sr-only">
             Demo statistics
@@ -152,14 +147,14 @@ export default function Home() {
           <OpportunityList
             opportunities={featuredOpportunities}
             heading="Featured opportunities"
-            countLabel={`Showing ${featuredOpportunities.length} featured fictional listings`}
+            countLabel={`Showing ${featuredOpportunities.length} featured listings`}
           />
         </section>
 
         <section aria-labelledby="categories-heading" className="space-y-5">
           <SectionHeading
             title="Explore by category"
-            description="Category links use URL parameters now so the future filter implementation can reuse the same routes."
+            description="Jump directly into the type of opportunity that matches your goal."
           />
           <h2 id="categories-heading" className="sr-only">
             Opportunity categories
@@ -207,10 +202,10 @@ export default function Home() {
                 Afghanistan-focused, online-aware, and internationally useful
               </h2>
               <p className="mt-3 text-sm leading-6 text-muted">
-                Demo listings include Afghan locations, online opportunities,
-                remote work, and international programs available to Afghan
-                applicants. The goal is to support local discovery while
-                acknowledging that many opportunities now happen across borders.
+                Listings include Afghan locations, online opportunities, remote
+                work, and international programs available to Afghan applicants.
+                The goal is to support local discovery while acknowledging that
+                many opportunities now happen across borders.
               </p>
             </div>
             <dl className="grid gap-3 sm:grid-cols-3 lg:w-80 lg:grid-cols-1">
@@ -226,15 +221,14 @@ export default function Home() {
             <div className="max-w-2xl">
               <div className="flex items-center gap-2 text-sm font-semibold text-accent">
                 <UsersRound aria-hidden="true" className="size-4" />
-                Demo data notice
+                Project input
               </div>
               <h2 className="mt-3 text-2xl font-semibold text-primary">
-                Help shape the next phase of KaarYab
+                Help shape KaarYab
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted">
-                Current listings are fictional demonstration records. Next
-                phases will add real search behavior, saved opportunities,
-                validated forms, and database-backed CRUD.
+                Share feedback on the kinds of opportunities, categories, and
+                details that would make KaarYab more useful.
               </p>
             </div>
             <LinkButton href="/contact" variant="secondary">
