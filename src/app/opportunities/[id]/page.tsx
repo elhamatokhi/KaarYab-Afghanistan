@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Globe2,
   MapPin,
+  Pencil,
   Star,
 } from "lucide-react";
 import { Badge, PageContainer } from "@/components/ui";
@@ -213,6 +214,25 @@ export default async function OpportunityDetailPage({
                   variant="full"
                 />
               </div>
+            </section>
+
+            <section
+              aria-labelledby="manage-opportunity-heading"
+              className="rounded-lg border border-border bg-card p-5"
+            >
+              <h2
+                id="manage-opportunity-heading"
+                className="text-xl font-semibold text-primary"
+              >
+                Manage
+              </h2>
+              <Link
+                href={`/opportunities/${opportunity.id}/edit`}
+                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-md border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-surface-elevated"
+              >
+                <Pencil aria-hidden="true" className="size-4" />
+                Edit opportunity
+              </Link>
             </section>
 
             <section

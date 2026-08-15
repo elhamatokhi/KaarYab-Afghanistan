@@ -66,8 +66,12 @@ const httpUrl = z
   .url("Apply link must be a valid URL.")
   .refine(
     (value) => {
-      const protocol = new URL(value).protocol;
-      return protocol === "http:" || protocol === "https:";
+      try {
+        const protocol = new URL(value).protocol;
+        return protocol === "http:" || protocol === "https:";
+      } catch {
+        return false;
+      }
     },
     { message: "Apply link must use HTTP or HTTPS." },
   );
