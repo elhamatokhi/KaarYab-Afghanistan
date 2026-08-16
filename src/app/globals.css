@@ -142,6 +142,80 @@ textarea {
   transform: scaleX(-1);
 }
 
+.pathway-pulse {
+  fill: var(--accent);
+  opacity: 0.9;
+}
+
+.pathway-float-a,
+.pathway-float-b,
+.pathway-float-c,
+.pathway-float-d {
+  animation-duration: 7s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  will-change: transform;
+}
+
+.pathway-float-a {
+  animation-name: pathway-float-a;
+}
+
+.pathway-float-b {
+  animation-delay: -1.5s;
+  animation-name: pathway-float-b;
+}
+
+.pathway-float-c {
+  animation-delay: -2.5s;
+  animation-name: pathway-float-c;
+}
+
+.pathway-float-d {
+  animation-delay: -3.5s;
+  animation-name: pathway-float-d;
+}
+
+@keyframes pathway-float-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -5px, 0);
+  }
+}
+
+@keyframes pathway-float-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(4px, -4px, 0);
+  }
+}
+
+@keyframes pathway-float-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(-4px, 4px, 0);
+  }
+}
+
+@keyframes pathway-float-d {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 5px, 0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -150,5 +224,9 @@ textarea {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  .pathway-pulses {
+    display: none;
   }
 }

@@ -174,24 +174,17 @@ describe("role-specific UI permissions", () => {
     });
   });
 
-  it("keeps Home navigation for anonymous and USER accounts but removes it for ADMIN", () => {
-    expect(getPublicNavItemsForRole(undefined).map((item) => item.href)).toEqual([
-      "/",
+  it("removes Home from shared desktop and mobile navigation for every role", () => {
+    const sharedDesktopAndMobileItems = getPublicNavItemsForRole().map(
+      (item) => item.href,
+    );
+
+    expect(sharedDesktopAndMobileItems).toEqual([
       "/opportunities",
       "/about",
       "/contact",
     ]);
-    expect(getPublicNavItemsForRole("USER").map((item) => item.href)).toEqual([
-      "/",
-      "/opportunities",
-      "/about",
-      "/contact",
-    ]);
-    expect(getPublicNavItemsForRole("ADMIN").map((item) => item.href)).toEqual([
-      "/opportunities",
-      "/about",
-      "/contact",
-    ]);
+    expect(sharedDesktopAndMobileItems).not.toContain("/");
   });
 });
 

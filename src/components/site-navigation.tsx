@@ -12,16 +12,13 @@ import type { MessageKey } from "@/i18n/messages";
 import { cn } from "@/lib/utils";
 
 export const publicNavItems = [
-  { href: "/", labelKey: "common.home" },
   { href: "/opportunities", labelKey: "common.opportunities" },
   { href: "/about", labelKey: "common.about" },
   { href: "/contact", labelKey: "common.contact" },
 ] as const satisfies readonly { href: string; labelKey: MessageKey }[];
 
-export function getPublicNavItemsForRole(role: string | undefined) {
-  return role === "ADMIN"
-    ? publicNavItems.filter((item) => item.href !== "/")
-    : publicNavItems;
+export function getPublicNavItemsForRole() {
+  return publicNavItems;
 }
 
 export function SiteNavigation() {
@@ -55,7 +52,7 @@ export function SiteNavigation() {
 
   const navLinks = (
     <>
-      {getPublicNavItemsForRole(session?.user?.role).map((item) => (
+      {getPublicNavItemsForRole().map((item) => (
         <NavLink
           key={item.href}
           href={item.href}

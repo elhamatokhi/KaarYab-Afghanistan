@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Globe2, Search, UsersRound } from "lucide-react";
+import {
+  ArrowRight,
+  BriefcaseBusiness,
+  GraduationCap,
+  Globe2,
+  Laptop,
+  UsersRound,
+  Wifi,
+} from "lucide-react";
 import { LinkButton, PageContainer, SectionHeading } from "@/components/ui";
 import { OPPORTUNITY_CATEGORIES } from "@/features/opportunities/constants";
 import {
@@ -99,32 +107,14 @@ export default async function Home() {
             </div>
           </div>
 
-          <form
-            action="/opportunities"
-            method="get"
-            className="rounded-lg border border-border bg-card p-5"
-            role="search"
-          >
-            <label htmlFor="home-search" className="text-sm font-semibold text-primary">
-              {t("home.searchLabel")}
-            </label>
-            <div className="mt-3 flex flex-col gap-3 sm:flex-row lg:flex-col">
-              <input
-                id="home-search"
-                name="search"
-                type="search"
-                placeholder={t("home.searchPlaceholder")}
-                className="min-h-11 min-w-0 flex-1 rounded-md border border-border bg-surface px-3 py-2 text-sm text-primary placeholder:text-muted"
-              />
-              <button
-                type="submit"
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-action px-4 py-2 text-sm font-semibold text-action-foreground transition hover:bg-action-hover"
-              >
-                <Search aria-hidden="true" className="size-4" />
-                {t("common.search")}
-              </button>
-            </div>
-          </form>
+          <OpportunityPathwayVisual
+            labels={{
+              job: t("option.category.job"),
+              scholarship: t("option.category.scholarship"),
+              onlineLearning: t("option.category.online-course"),
+              remoteWork: t("option.category.remote-work"),
+            }}
+          />
         </section>
 
         <section aria-labelledby="audience-heading" className="space-y-5">
@@ -278,6 +268,131 @@ function StatItem({
       <dd className="mt-2 text-3xl font-semibold text-primary">
         {formatLocalizedNumber(value, locale)}
       </dd>
+    </div>
+  );
+}
+
+function OpportunityPathwayVisual({
+  labels,
+}: {
+  labels: {
+    job: string;
+    onlineLearning: string;
+    remoteWork: string;
+    scholarship: string;
+  };
+}) {
+  const nodes = [
+    {
+      className: "left-3 top-5 sm:left-5",
+      icon: BriefcaseBusiness,
+      label: labels.job,
+      motionClass: "pathway-float-a",
+    },
+    {
+      className: "right-3 top-5 sm:right-5",
+      icon: GraduationCap,
+      label: labels.scholarship,
+      motionClass: "pathway-float-b",
+    },
+    {
+      className: "bottom-5 left-3 sm:left-5",
+      icon: Laptop,
+      label: labels.onlineLearning,
+      motionClass: "pathway-float-c",
+    },
+    {
+      className: "bottom-5 right-3 sm:right-5",
+      icon: Wifi,
+      label: labels.remoteWork,
+      motionClass: "pathway-float-d",
+    },
+  ] as const;
+
+  return (
+    <div
+      aria-hidden="true"
+      className="relative mx-auto h-72 w-full max-w-sm overflow-hidden rounded-lg border border-border bg-card sm:h-80 lg:mx-0"
+    >
+      <svg
+        className="absolute inset-0 size-full"
+        viewBox="0 0 360 320"
+        role="presentation"
+        focusable="false"
+      >
+        <defs>
+          <pattern
+            id="pathway-pattern"
+            width="36"
+            height="36"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M18 4 32 18 18 32 4 18Z"
+              fill="none"
+              stroke="var(--border)"
+              strokeWidth="1"
+              opacity="0.38"
+            />
+          </pattern>
+          <path id="pathway-job" d="M82 68 C122 78 146 116 180 160" />
+          <path id="pathway-scholarship" d="M278 68 C238 78 214 116 180 160" />
+          <path id="pathway-learning" d="M72 250 C116 238 142 194 180 160" />
+          <path id="pathway-remote" d="M288 250 C244 238 218 194 180 160" />
+        </defs>
+
+        <rect width="360" height="320" fill="url(#pathway-pattern)" opacity="0.5" />
+        <g fill="none" stroke="var(--border)" strokeLinecap="round" strokeWidth="2">
+          <use href="#pathway-job" />
+          <use href="#pathway-scholarship" />
+          <use href="#pathway-learning" />
+          <use href="#pathway-remote" />
+        </g>
+        <g className="pathway-pulses">
+          <circle className="pathway-pulse" r="4">
+            <animateMotion dur="5.2s" repeatCount="indefinite">
+              <mpath href="#pathway-job" />
+            </animateMotion>
+          </circle>
+          <circle className="pathway-pulse" r="4">
+            <animateMotion begin="1.2s" dur="5.4s" repeatCount="indefinite">
+              <mpath href="#pathway-scholarship" />
+            </animateMotion>
+          </circle>
+          <circle className="pathway-pulse" r="4">
+            <animateMotion begin="0.8s" dur="5.8s" repeatCount="indefinite">
+              <mpath href="#pathway-learning" />
+            </animateMotion>
+          </circle>
+          <circle className="pathway-pulse" r="4">
+            <animateMotion begin="1.8s" dur="5.6s" repeatCount="indefinite">
+              <mpath href="#pathway-remote" />
+            </animateMotion>
+          </circle>
+        </g>
+      </svg>
+
+      <div className="absolute left-1/2 top-1/2 z-10 flex size-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-lg border border-action/30 bg-secondary-action text-secondary-action-foreground shadow-sm">
+        <BriefcaseBusiness className="size-9" strokeWidth={1.8} />
+      </div>
+
+      {nodes.map((node) => {
+        const Icon = node.icon;
+
+        return (
+          <div
+            key={node.label}
+            className={`${node.className} ${node.motionClass} absolute z-10 flex w-28 flex-col items-center gap-2 rounded-lg border border-border bg-surface px-3 py-3 text-center shadow-sm sm:w-32`}
+          >
+            <span className="flex size-9 items-center justify-center rounded-md bg-accent-soft text-accent-foreground">
+              <Icon className="size-5" strokeWidth={1.8} />
+            </span>
+            <span className="text-xs font-semibold leading-4 text-primary">
+              {node.label}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
