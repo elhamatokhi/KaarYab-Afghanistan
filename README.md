@@ -1,96 +1,154 @@
 # KaarYab Afghanistan
 
-KaarYab Afghanistan is a capstone opportunity finder for Afghan youth. It
-supports public opportunity browsing, search, filters, details, multilingual UI,
-authenticated user saves, and admin-only opportunity management.
+KaarYab Afghanistan is an opportunity finder for Afghan youth. It helps students, graduates, and early-career users discover jobs, internships, scholarships, courses, training programs, remote work, and volunteer opportunities in one place. The project addresses the problem of opportunity information being scattered across many sources. Current opportunities are fictional demonstration records stored in PostgreSQL.
 
-## Stack
+## Homepage Screenshot
 
-- Next.js App Router, React, TypeScript, Tailwind CSS
-- PostgreSQL on Neon
-- Prisma ORM with generated client in `src/generated/prisma`
-- Auth.js credentials authentication with Prisma-backed users
-- React Hook Form and Zod
-- `next-themes` for light, dark, and system themes
+![Homepage screenshot placeholder](docs/homepage-screenshot-placeholder.png)
+
+## Live Demo
+
+Live application: [Add deployed URL here]
+
+## Main Features
+
+- Opportunity browsing and Details pages
+- Search, filtering, and sorting
+- USER and ADMIN authentication
+- Role-based authorization
+- User-owned saved opportunities
+- Admin Dashboard
+- Add, Edit, and Delete opportunity management
+- PostgreSQL with Prisma
+- English, Dari, Pashto, and German interface
+- RTL support for Dari and Pashto
+- Light and dark themes
+- Responsive design
+- SEO metadata, sitemap, and robots configuration
+- Validation and accessible interfaces
+
+## User Roles
+
+| Role | What the role can do |
+| --- | --- |
+| Visitor | Browse public pages, search and filter opportunities, view opportunity details, register, and log in. |
+| Registered USER | Use public browsing features and save opportunities to their own account. |
+| ADMIN | Access the dashboard and manage opportunities by adding, editing, and deleting records. |
+
+## Technologies
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- PostgreSQL / Neon
+- Prisma
+- Auth.js
+- Redux Toolkit
+- React Hook Form
+- Zod
+- Vitest
+- Vercel
 
 ## Local Setup
 
-```bash
-npm install
-cp .env.example .env
-npm run prisma:generate
-npm run prisma:migrate -- --name init
-npm run prisma:seed
-npm run auth:provision-demo
-npm run dev
-```
+1. Clone the repository.
 
-Open `http://localhost:3000`.
+   ```bash
+   git clone <repository-url>
+   cd KaarYab-Afghanistan
+   ```
 
-## Environment Variables
+2. Install dependencies.
 
-Use safe placeholders from `.env.example` and never commit `.env`.
+   ```bash
+   npm install
+   ```
 
-Required:
+3. Copy the environment template.
 
-- `DATABASE_URL`: pooled Neon connection for runtime queries.
-- `DIRECT_URL`: direct Neon connection for Prisma migrations.
-- `AUTH_SECRET`: strong Auth.js secret.
-- `AUTH_URL`: local or production app URL.
-- `NEXT_PUBLIC_SITE_URL`: canonical public site URL for metadata, sitemap, and robots.
+   ```bash
+   cp .env.example .env
+   ```
 
-Admin/demo provisioning:
+4. Configure the required environment variables in `.env`.
 
-- `INITIAL_ADMIN_NAME`
-- `INITIAL_ADMIN_EMAIL`
-- `INITIAL_ADMIN_PASSWORD`
-- `DEMO_USER_NAME`
-- `DEMO_USER_EMAIL`
-- `DEMO_USER_PASSWORD`
-- `DEMO_ADMIN_NAME`
-- `DEMO_ADMIN_EMAIL`
-- `DEMO_ADMIN_PASSWORD`
+   Required database and app variables:
 
-For Neon with the Node `pg` adapter, use the pooler host for `DATABASE_URL`,
-the direct host for `DIRECT_URL`, and `sslmode=verify-full`.
+   - `DATABASE_URL`
+   - `DIRECT_URL`
+   - `AUTH_SECRET`
+   - `AUTH_URL`
+   - `NEXT_PUBLIC_SITE_URL`
 
-## Prisma
+   Admin and demo-account variables:
 
-```bash
-npm run prisma:generate
-npm run prisma:migrate -- --name migration_name
-npm run prisma:seed
-npx prisma migrate status
-```
+   - `INITIAL_ADMIN_NAME`
+   - `INITIAL_ADMIN_EMAIL`
+   - `INITIAL_ADMIN_PASSWORD`
+   - `DEMO_USER_NAME`
+   - `DEMO_USER_EMAIL`
+   - `DEMO_USER_PASSWORD`
+   - `DEMO_ADMIN_NAME`
+   - `DEMO_ADMIN_EMAIL`
+   - `DEMO_ADMIN_PASSWORD`
 
-The seed creates the fictional demo opportunities. Demo accounts are provisioned
-separately:
+5. Generate Prisma Client.
 
-```bash
-npm run auth:provision-demo
-npm run auth:provision-admin
-```
+   ```bash
+   npm run prisma:generate
+   ```
 
-## Verification
+6. Apply migrations.
+
+   ```bash
+   npm run prisma:migrate
+   ```
+
+7. Seed demonstration opportunities.
+
+   ```bash
+   npm run prisma:seed
+   ```
+
+8. Provision demo accounts.
+
+   ```bash
+   npm run auth:provision-demo
+   ```
+
+   To provision a private initial admin account, use:
+
+   ```bash
+   npm run auth:provision-admin
+   ```
+
+9. Start the development server.
+
+   ```bash
+   npm run dev
+   ```
+
+## Testing
 
 ```bash
 npm run test
 npm run lint
 npm run typecheck
 npm run build
-npm audit --omit=dev
 ```
 
-## Vercel Deployment
+## Deployment
 
-Set all required environment variables in Vercel before building. The
-`postinstall` script runs `prisma generate`, and the build runs
-`next build --webpack`. Apply migrations from a trusted environment before
-production traffic:
+The application is designed to deploy on Vercel, with Neon providing hosted PostgreSQL. Configure the required environment variables in Vercel, keep database credentials private, and apply Prisma migrations before using the production database.
 
-```bash
-npm run prisma:migrate -- --name migration_name
-```
+## Limitations
 
-Do not run seed or demo-account provisioning automatically in production unless
-the deployment intentionally uses demo data.
+- Opportunity records are fictional demonstration data.
+- External application links are disabled.
+- Email verification, password reset, and OAuth are not implemented.
+- Public demo Admin access is intended only for demonstration.
+
+## Contributor
+
+**Elhama Tokhi**
