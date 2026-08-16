@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mail, MessageSquareText, Send, ShieldCheck } from "lucide-react";
+import { Mail, MessageSquareText, Send } from "lucide-react";
 import { PageContainer, PageHeader } from "@/components/ui";
 import { getI18n } from "@/i18n/server";
 import { ContactForm } from "./contact-form";
