@@ -2,13 +2,10 @@
 
 KaarYab Afghanistan is an opportunity finder for Afghan youth. It helps students, graduates, and early-career users discover jobs, internships, scholarships, courses, training programs, remote work, and volunteer opportunities in one place. The project addresses the problem of opportunity information being scattered across many sources. Current opportunities are fictional demonstration records stored in PostgreSQL.
 
-## Homepage Screenshot
-
-![Homepage screenshot placeholder](docs/homepage-screenshot-placeholder.png)
+![Homepage screenshot placeholder](docs/images/homepage-screenshot.png)
 
 ## Live Demo
-
-Live application: [Add deployed URL here]
+ [Click here](https://kaar-yab-afghanistan-five.vercel.app/)
 
 ## Main Features
 
